@@ -2,39 +2,39 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Guilda Design System - Inspired by anime culture 
+/* Guilda Design System - Black, White & Red Theme 
 All colors MUST be HSL.
 */
 
 @layer base {
   :root {
     /* Base colors - Light theme */
-    --background: 220 15% 97%;
-    --foreground: 240 10% 15%;
+    --background: 0 0% 98%;
+    --foreground: 0 0% 10%;
 
     /* Card colors */
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 15%;
+    --card-foreground: 0 0% 10%;
 
     /* Popover colors */
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 15%;
+    --popover-foreground: 0 0% 10%;
 
-    /* Primary - One Piece inspired ocean blue */
-    --primary: 210 100% 45%;
+    /* Primary - Deep Red */
+    --primary: 0 75% 45%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 210 100% 65%;
+    --primary-glow: 0 85% 60%;
 
-    /* Secondary - Dragon Ball orange */
-    --secondary: 25 95% 55%;
+    /* Secondary - Pure Black */
+    --secondary: 0 0% 15%;
     --secondary-foreground: 0 0% 100%;
 
     /* Muted colors */
-    --muted: 220 15% 95%;
-    --muted-foreground: 240 5% 50%;
+    --muted: 0 0% 95%;
+    --muted-foreground: 0 0% 40%;
 
-    /* Accent - Naruto orange */
-    --accent: 35 100% 60%;
+    /* Accent - Bright Red */
+    --accent: 0 100% 55%;
     --accent-foreground: 0 0% 100%;
 
     /* Destructive */
@@ -42,19 +42,19 @@ All colors MUST be HSL.
     --destructive-foreground: 0 0% 100%;
 
     /* Border and input */
-    --border: 220 13% 90%;
-    --input: 220 13% 90%;
-    --ring: 210 100% 45%;
+    --border: 0 0% 85%;
+    --input: 0 0% 85%;
+    --ring: 0 75% 45%;
 
     /* Custom Guilda tokens */
     --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
     --gradient-secondary: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--accent)));
-    --gradient-hero: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 50%, hsl(var(--accent)) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(0 0% 5%) 0%, hsl(var(--primary)) 50%, hsl(0 0% 15%) 100%);
     
-    /* Shadows inspired by anime energy effects */
-    --shadow-card: 0 4px 20px -4px hsl(var(--primary) / 0.1);
-    --shadow-glow: 0 0 30px hsl(var(--primary) / 0.3);
-    --shadow-intense: 0 8px 40px -8px hsl(var(--accent) / 0.4);
+    /* Shadows inspired by red glow effects */
+    --shadow-card: 0 4px 20px -4px hsl(var(--primary) / 0.2);
+    --shadow-glow: 0 0 30px hsl(var(--primary) / 0.4);
+    --shadow-intense: 0 8px 40px -8px hsl(var(--accent) / 0.5);
 
     /* Animations */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -62,61 +62,55 @@ All colors MUST be HSL.
 
     --radius: 0.5rem;
 
+    /* Sidebar colors - Light mode */
     --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-foreground: 0 0% 10%;
+    --sidebar-primary: 0 75% 45%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 0 0% 95%;
+    --sidebar-accent-foreground: 0 0% 10%;
+    --sidebar-border: 0 0% 85%;
+    --sidebar-ring: 0 75% 45%;
   }
 
   .dark {
-    /* Base colors - Dark theme */
-    --background: 240 15% 8%;
-    --foreground: 210 40% 95%;
+    /* Base colors - Dark theme (Black & Red) */
+    --background: 0 0% 5%;
+    --foreground: 0 0% 95%;
 
     /* Card colors */
-    --card: 240 12% 12%;
-    --card-foreground: 210 40% 95%;
+    --card: 0 0% 10%;
+    --card-foreground: 0 0% 95%;
 
     /* Popover colors */
-    --popover: 240 12% 12%;
-    --popover-foreground: 210 40% 95%;
+    --popover: 0 0% 10%;
+    --popover-foreground: 0 0% 95%;
 
-    /* Primary - Brighter for dark mode */
-    --primary: 210 100% 55%;
-    --primary-foreground: 240 15% 8%;
-    --primary-glow: 210 100% 70%;
+    /* Primary - Bright Red for dark mode */
+    --primary: 0 85% 60%;
+    --primary-foreground: 0 0% 5%;
+    --primary-glow: 0 95% 70%;
 
-    /* Secondary - Adjusted for dark mode */
-    --secondary: 25 85% 50%;
-    --secondary-foreground: 240 15% 8%;
+    /* Secondary - Pure Black */
+    --secondary: 0 0% 15%;
+    --secondary-foreground: 0 0% 95%;
 
     /* Muted colors */
-    --muted: 240 8% 15%;
-    --muted-foreground: 240 5% 60%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 60%;
 
-    /* Accent - Brighter Naruto orange */
-    --accent: 35 95% 55%;
-    --accent-foreground: 240 15% 8%;
+    /* Accent - Vibrant Red */
+    --accent: 0 100% 65%;
+    --accent-foreground: 0 0% 5%;
 
     /* Destructive */
     --destructive: 0 75% 55%;
-    --destructive-foreground: 210 40% 95%;
+    --destructive-foreground: 0 0% 95%;
 
     /* Border and input */
-    --border: 240 8% 20%;
-    --input: 240 8% 20%;
-    --ring: 210 100% 55%;
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 0 85% 60%;
 
     /* Custom Guilda tokens - Dark mode */
     --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
@@ -124,19 +118,19 @@ All colors MUST be HSL.
     --gradient-hero: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 50%, hsl(var(--accent)) 100%);
     
     /* Shadows for dark mode */
-    --shadow-card: 0 4px 20px -4px hsl(var(--primary) / 0.2);
-    --shadow-glow: 0 0 30px hsl(var(--primary) / 0.4);
-    --shadow-intense: 0 8px 40px -8px hsl(var(--accent) / 0.5);
+    --shadow-card: 0 4px 20px -4px hsl(var(--primary) / 0.3);
+    --shadow-glow: 0 0 30px hsl(var(--primary) / 0.5);
+    --shadow-intense: 0 8px 40px -8px hsl(var(--accent) / 0.6);
 
     /* Sidebar colors for dark mode */
-    --sidebar-background: 240 15% 8%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 210 100% 55%;
+    --sidebar-background: 0 0% 5%;
+    --sidebar-foreground: 0 0% 95%;
+    --sidebar-primary: 0 85% 60%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 210 100% 55%;
+    --sidebar-accent: 0 0% 15%;
+    --sidebar-accent-foreground: 0 0% 95%;
+    --sidebar-border: 0 0% 15%;
+    --sidebar-ring: 0 85% 60%;
   }
 }
 

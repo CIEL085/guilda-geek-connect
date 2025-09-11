@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Heart, Gamepad2, BookOpen, Users } from "lucide-react";
-import heroImage from "@/assets/guilda-hero.jpg";
+import heroImage from "@/assets/guilda-hero-bwr.jpg";
 
 interface HeroSectionProps {
   onEnter: () => void;

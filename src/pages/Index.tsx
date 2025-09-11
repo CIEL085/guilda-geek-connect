@@ -5,10 +5,18 @@ import { Badge } from "@/components/ui/badge";
 import { Heart, X, MessageCircle, User } from "lucide-react";
 import { ProfileCard } from "@/components/ProfileCard";
 import { HeroSection } from "@/components/HeroSection";
+import { AuthForm } from "@/components/AuthForm";
+import { GenderSelection } from "@/components/GenderSelection";
+import { InterestSelection } from "@/components/InterestSelection";
 
 const Index = () => {
-  const [currentView, setCurrentView] = useState<"hero" | "app">("hero");
+  const [currentView, setCurrentView] = useState<"hero" | "auth" | "gender" | "interests" | "app">("hero");
   const [profileIndex, setProfileIndex] = useState(0);
+  const [userPreferences, setUserPreferences] = useState<{
+    userData?: any;
+    genderInterests?: string[];
+    tags?: string[];
+  }>({});
 
   // Sample profiles for demo
   const sampleProfiles = [
@@ -43,8 +51,45 @@ const Index = () => {
     setProfileIndex((prev) => (prev + 1) % sampleProfiles.length);
   };
 
+  const handleAuthComplete = (userData: any) => {
+    setUserPreferences(prev => ({ ...prev, userData }));
+    setCurrentView("gender");
+  };
+
+  const handleGenderComplete = (genderInterests: string[]) => {
+    setUserPreferences(prev => ({ ...prev, genderInterests }));
+    setCurrentView("interests");
+  };
+
+  const handleInterestComplete = (tags: string[]) => {
+    setUserPreferences(prev => ({ ...prev, tags }));
+    setCurrentView("app");
+  };
+
+  const handleBackToGender = () => {
+    setCurrentView("gender");
+  };
+
+  // Render different views based on current state
   if (currentView === "hero") {
-    return <HeroSection onEnter={() => setCurrentView("app")} />;
+    return <HeroSection onEnter={() => setCurrentView("auth")} />;
+  }
+
+  if (currentView === "auth") {
+    return <AuthForm onComplete={handleAuthComplete} />;
+  }
+
+  if (currentView === "gender") {
+    return <GenderSelection onComplete={handleGenderComplete} />;
+  }
+
+  if (currentView === "interests") {
+    return (
+      <InterestSelection 
+        onComplete={handleInterestComplete}
+        onBack={handleBackToGender}
+      />
+    );
   }
 
   return (
