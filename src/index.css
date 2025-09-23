@@ -2,39 +2,39 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Guilda Design System - Black, White & Red Theme 
+/* Guilda Design System - Blue & White Theme 
 All colors MUST be HSL.
 */
 
 @layer base {
   :root {
     /* Base colors - Light theme */
-    --background: 0 0% 98%;
-    --foreground: 0 0% 10%;
+    --background: 220 100% 98%;
+    --foreground: 0 0% 100%;
 
     /* Card colors */
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 10%;
+    --card: 220 100% 95%;
+    --card-foreground: 0 0% 100%;
 
     /* Popover colors */
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 10%;
+    --popover: 220 100% 95%;
+    --popover-foreground: 0 0% 100%;
 
-    /* Primary - Deep Red */
-    --primary: 0 75% 45%;
+    /* Primary - Deep Blue */
+    --primary: 220 85% 45%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 0 85% 60%;
+    --primary-glow: 220 95% 60%;
 
-    /* Secondary - Pure Black */
-    --secondary: 0 0% 15%;
+    /* Secondary - Dark Blue */
+    --secondary: 220 75% 25%;
     --secondary-foreground: 0 0% 100%;
 
     /* Muted colors */
-    --muted: 0 0% 95%;
-    --muted-foreground: 0 0% 40%;
+    --muted: 220 50% 90%;
+    --muted-foreground: 0 0% 95%;
 
-    /* Accent - Bright Red */
-    --accent: 0 100% 55%;
+    /* Accent - Bright Blue */
+    --accent: 220 100% 55%;
     --accent-foreground: 0 0% 100%;
 
     /* Destructive */
@@ -42,16 +42,16 @@ All colors MUST be HSL.
     --destructive-foreground: 0 0% 100%;
 
     /* Border and input */
-    --border: 0 0% 85%;
-    --input: 0 0% 85%;
-    --ring: 0 75% 45%;
+    --border: 220 30% 80%;
+    --input: 220 30% 80%;
+    --ring: 220 85% 45%;
 
     /* Custom Guilda tokens */
     --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
     --gradient-secondary: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--accent)));
-    --gradient-hero: linear-gradient(135deg, hsl(0 0% 5%) 0%, hsl(var(--primary)) 50%, hsl(0 0% 15%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(220 100% 15%) 0%, hsl(var(--primary)) 50%, hsl(220 75% 25%) 100%);
     
-    /* Shadows inspired by red glow effects */
+    /* Shadows inspired by blue glow effects */
     --shadow-card: 0 4px 20px -4px hsl(var(--primary) / 0.2);
     --shadow-glow: 0 0 30px hsl(var(--primary) / 0.4);
     --shadow-intense: 0 8px 40px -8px hsl(var(--accent) / 0.5);
@@ -63,54 +63,54 @@ All colors MUST be HSL.
     --radius: 0.5rem;
 
     /* Sidebar colors - Light mode */
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 0 0% 10%;
-    --sidebar-primary: 0 75% 45%;
+    --sidebar-background: 220 100% 98%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 220 85% 45%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 95%;
-    --sidebar-accent-foreground: 0 0% 10%;
-    --sidebar-border: 0 0% 85%;
-    --sidebar-ring: 0 75% 45%;
+    --sidebar-accent: 220 50% 90%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 220 30% 80%;
+    --sidebar-ring: 220 85% 45%;
   }
 
   .dark {
-    /* Base colors - Dark theme (Black & Red) */
-    --background: 0 0% 5%;
+    /* Base colors - Dark theme (Blue & White) */
+    --background: 220 100% 8%;
     --foreground: 0 0% 95%;
 
     /* Card colors */
-    --card: 0 0% 10%;
+    --card: 220 85% 12%;
     --card-foreground: 0 0% 95%;
 
     /* Popover colors */
-    --popover: 0 0% 10%;
+    --popover: 220 85% 12%;
     --popover-foreground: 0 0% 95%;
 
-    /* Primary - Bright Red for dark mode */
-    --primary: 0 85% 60%;
-    --primary-foreground: 0 0% 5%;
-    --primary-glow: 0 95% 70%;
+    /* Primary - Bright Blue for dark mode */
+    --primary: 220 95% 65%;
+    --primary-foreground: 220 100% 8%;
+    --primary-glow: 220 100% 75%;
 
-    /* Secondary - Pure Black */
-    --secondary: 0 0% 15%;
+    /* Secondary - Dark Blue */
+    --secondary: 220 75% 20%;
     --secondary-foreground: 0 0% 95%;
 
     /* Muted colors */
-    --muted: 0 0% 15%;
-    --muted-foreground: 0 0% 60%;
+    --muted: 220 50% 15%;
+    --muted-foreground: 0 0% 75%;
 
-    /* Accent - Vibrant Red */
-    --accent: 0 100% 65%;
-    --accent-foreground: 0 0% 5%;
+    /* Accent - Vibrant Blue */
+    --accent: 220 100% 70%;
+    --accent-foreground: 220 100% 8%;
 
     /* Destructive */
     --destructive: 0 75% 55%;
     --destructive-foreground: 0 0% 95%;
 
     /* Border and input */
-    --border: 0 0% 20%;
-    --input: 0 0% 20%;
-    --ring: 0 85% 60%;
+    --border: 220 50% 20%;
+    --input: 220 50% 20%;
+    --ring: 220 95% 65%;
 
     /* Custom Guilda tokens - Dark mode */
     --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
@@ -123,14 +123,14 @@ All colors MUST be HSL.
     --shadow-intense: 0 8px 40px -8px hsl(var(--accent) / 0.6);
 
     /* Sidebar colors for dark mode */
-    --sidebar-background: 0 0% 5%;
+    --sidebar-background: 220 100% 8%;
     --sidebar-foreground: 0 0% 95%;
-    --sidebar-primary: 0 85% 60%;
+    --sidebar-primary: 220 95% 65%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 15%;
+    --sidebar-accent: 220 50% 15%;
     --sidebar-accent-foreground: 0 0% 95%;
-    --sidebar-border: 0 0% 15%;
-    --sidebar-ring: 0 85% 60%;
+    --sidebar-border: 220 50% 15%;
+    --sidebar-ring: 220 95% 65%;
   }
 }
 
