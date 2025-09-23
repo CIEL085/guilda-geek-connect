@@ -14,13 +14,28 @@ const popularInterests = [
 
 interface InterestTagsProps {
   selectedTags: string[];
-  onTagToggle: (tag: string) => void;
+  onTagToggle?: (tag: string) => void;
+  onTagsChange?: (tags: string[]) => void;
   maxTags?: number;
 }
 
-export const InterestTags = ({ selectedTags, onTagToggle, maxTags = 10 }: InterestTagsProps) => {
+export const InterestTags = ({ selectedTags, onTagToggle, onTagsChange, maxTags = 10 }: InterestTagsProps) => {
   const isSelected = (tag: string) => selectedTags.includes(tag);
   const canSelect = selectedTags.length < maxTags;
+
+  const handleTagClick = (tag: string) => {
+    const selected = isSelected(tag);
+    const canToggle = selected || canSelect;
+    
+    if (canToggle) {
+      const newTags = selected 
+        ? selectedTags.filter(t => t !== tag)
+        : [...selectedTags, tag];
+      
+      onTagToggle?.(tag);
+      onTagsChange?.(newTags);
+    }
+  };
 
   return (
     <div className="space-y-4">
@@ -54,7 +69,7 @@ export const InterestTags = ({ selectedTags, onTagToggle, maxTags = 10 }: Intere
               `}
               onClick={() => {
                 if (!disabled || selected) {
-                  onTagToggle(tag);
+                  handleTagClick(tag);
                 }
               }}
             >
