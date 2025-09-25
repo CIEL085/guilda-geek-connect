@@ -39,7 +39,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const signUp = async (email: string, password: string, fullName: string) => {
-    const redirectUrl = `${window.location.origin}/`;
+    // Use the exact current URL for redirect
+    const redirectUrl = window.location.href;
     
     const { error } = await supabase.auth.signUp({
       email,

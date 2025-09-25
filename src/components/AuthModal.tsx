@@ -48,13 +48,18 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
           description: result.error.message
         });
       } else {
-        toast({
-          title: isSignUp ? "Conta criada!" : "Login realizado!",
-          description: isSignUp 
-            ? "Verifique seu email para confirmar a conta." 
-            : "Bem-vindo de volta!"
-        });
-        onClose();
+        if (isSignUp) {
+          toast({
+            title: "Conta criada!",
+            description: "Verifique seu email para confirmar a conta, ou faça login se já tem uma conta."
+          });
+        } else {
+          toast({
+            title: "Login realizado!",
+            description: "Bem-vindo de volta!"
+          });
+          onClose();
+        }
       }
     } catch (error) {
       toast({
