@@ -14,57 +14,47 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
+  // Mock authentication for testing - simulate logged in user
+  const mockUser = {
+    id: 'test-user-123',
+    email: 'teste@exemplo.com',
+    created_at: new Date().toISOString(),
+    app_metadata: {},
+    user_metadata: { full_name: 'Usuário Teste' },
+    aud: 'authenticated',
+    confirmed_at: new Date().toISOString(),
+    email_confirmed_at: new Date().toISOString(),
+    phone: '',
+    last_sign_in_at: new Date().toISOString(),
+    role: 'authenticated',
+    updated_at: new Date().toISOString()
+  } as User;
 
-  useEffect(() => {
-    // Set up auth state listener FIRST
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        setLoading(false);
-      }
-    );
+  const mockSession = {
+    access_token: 'mock-token',
+    refresh_token: 'mock-refresh',
+    expires_in: 3600,
+    token_type: 'bearer',
+    user: mockUser
+  } as Session;
 
-    // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
+  const [user] = useState<User | null>(mockUser);
+  const [session] = useState<Session | null>(mockSession);
+  const [loading] = useState(false);
 
   const signUp = async (email: string, password: string, fullName: string) => {
-    // Use the exact current URL for redirect
-    const redirectUrl = window.location.href;
-    
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: redirectUrl,
-        data: {
-          full_name: fullName
-        }
-      }
-    });
-    return { error };
+    // Mock signup - always succeeds for testing
+    return { error: null };
   };
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password
-    });
-    return { error };
+    // Mock signin - always succeeds for testing
+    return { error: null };
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    // Mock signout - just reload page
+    window.location.reload();
   };
 
   const value = {

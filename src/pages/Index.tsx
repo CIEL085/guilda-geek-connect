@@ -145,14 +145,12 @@ const Index = () => {
     setCurrentView("gender");
   };
 
-  // Redirect authenticated users to app
+  // Skip authentication for testing - go directly to app
   useEffect(() => {
-    if (user && !loading) {
+    if (!loading) {
       setCurrentView("app");
-    } else if (!user && !loading && currentView === "app") {
-      setCurrentView("hero");
     }
-  }, [user, loading]);
+  }, [loading]);
 
   // Show loading state
   if (loading) {
@@ -166,25 +164,16 @@ const Index = () => {
     );
   }
 
-  console.log("Current authModalOpen state:", authModalOpen);
-
   // Render different views based on current state
   if (currentView === "hero") {
-    console.log("Rendering hero section");
     return (
       <>
-        <HeroSection onEnter={() => {
-          console.log("onEnter called from Index, setting authModalOpen to true");
-          setAuthModalOpen(true);
-        }} />
+        <HeroSection onEnter={() => setAuthModalOpen(true)} />
         
         {/* Modals - render here to ensure they're always available */}
         <AuthModal 
           isOpen={authModalOpen} 
-          onClose={() => {
-            console.log("AuthModal onClose called");
-            setAuthModalOpen(false);
-          }} 
+          onClose={() => setAuthModalOpen(false)} 
         />
       </>
     );
