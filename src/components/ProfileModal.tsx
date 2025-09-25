@@ -19,116 +19,49 @@ interface ProfileModalProps {
 
 export const ProfileModal = ({ isOpen, onClose }: ProfileModalProps) => {
   const [profile, setProfile] = useState({
-    display_name: '',
-    bio: '',
-    age: '',
-    interests: [] as string[]
+    display_name: 'Usuário Teste',
+    bio: 'Otaku apaixonado por animes e jogos!',
+    age: '25',
+    interests: ['#onepiece', '#naruto', '#gaming'] as string[]
   });
-  const [photos, setPhotos] = useState<string[]>([]);
+  const [photos, setPhotos] = useState<string[]>([
+    'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=500&fit=crop&crop=face',
+    'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=500&fit=crop&crop=face',
+    'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=500&fit=crop&crop=face'
+  ]);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
 
-  useEffect(() => {
-    if (user && isOpen) {
-      loadProfile();
-      loadPhotos();
-    }
-  }, [user, isOpen]);
-
-  const loadProfile = async () => {
-    if (!user) return;
-
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('user_id', user.id)
-      .maybeSingle();
-
-    if (data) {
-      setProfile({
-        display_name: data.display_name || '',
-        bio: data.bio || '',
-        age: data.age?.toString() || '',
-        interests: data.interests || []
-      });
-    }
-  };
-
-  const loadPhotos = async () => {
-    if (!user) return;
-
-    const { data, error } = await supabase
-      .from('profile_photos')
-      .select('photo_url')
-      .eq('user_id', user.id)
-      .order('created_at');
-
-    if (data) {
-      setPhotos(data.map(photo => photo.photo_url));
-    }
-  };
-
   const uploadPhoto = async (file: File) => {
     if (!user) return;
 
     setUploading(true);
-    const fileName = `${user.id}/${Date.now()}_${file.name}`;
     
-    const { error: uploadError } = await supabase.storage
-      .from('profile-photos')
-      .upload(fileName, file);
-
-    if (uploadError) {
-      toast({
-        variant: "destructive",
-        title: "Erro no upload",
-        description: "Não foi possível enviar a foto."
-      });
+    // Simulate upload delay
+    setTimeout(() => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        if (e.target?.result) {
+          setPhotos(prev => [...prev, e.target!.result as string]);
+          toast({
+            title: "Foto adicionada!",
+            description: "Sua foto foi enviada com sucesso."
+          });
+        }
+      };
+      reader.readAsDataURL(file);
       setUploading(false);
-      return;
-    }
-
-    const { data } = supabase.storage
-      .from('profile-photos')
-      .getPublicUrl(fileName);
-
-    const { error: dbError } = await supabase
-      .from('profile_photos')
-      .insert({
-        user_id: user.id,
-        photo_url: data.publicUrl,
-        is_primary: photos.length === 0
-      });
-
-    if (!dbError) {
-      setPhotos(prev => [...prev, data.publicUrl]);
-      toast({
-        title: "Foto adicionada!",
-        description: "Sua foto foi enviada com sucesso."
-      });
-    }
-
-    setUploading(false);
+    }, 1000);
   };
 
   const removePhoto = async (photoUrl: string, index: number) => {
-    if (!user) return;
-
-    const { error } = await supabase
-      .from('profile_photos')
-      .delete()
-      .eq('user_id', user.id)
-      .eq('photo_url', photoUrl);
-
-    if (!error) {
-      setPhotos(prev => prev.filter((_, i) => i !== index));
-      toast({
-        title: "Foto removida",
-        description: "A foto foi removida do seu perfil."
-      });
-    }
+    setPhotos(prev => prev.filter((_, i) => i !== index));
+    toast({
+      title: "Foto removida",
+      description: "A foto foi removida do seu perfil."
+    });
   };
 
   const handleSaveProfile = async () => {
@@ -145,31 +78,15 @@ export const ProfileModal = ({ isOpen, onClose }: ProfileModalProps) => {
 
     setLoading(true);
 
-    const { error } = await supabase
-      .from('profiles')
-      .upsert({
-        user_id: user.id,
-        display_name: profile.display_name,
-        bio: profile.bio,
-        age: profile.age ? parseInt(profile.age) : null,
-        interests: profile.interests
-      });
-
-    if (error) {
-      toast({
-        variant: "destructive",
-        title: "Erro ao salvar",
-        description: "Não foi possível salvar o perfil."
-      });
-    } else {
+    // Simulate save delay
+    setTimeout(() => {
       toast({
         title: "Perfil atualizado!",
         description: "Suas informações foram salvas."
       });
       onClose();
-    }
-
-    setLoading(false);
+      setLoading(false);
+    }, 1000);
   };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {

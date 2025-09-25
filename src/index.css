@@ -10,15 +10,15 @@ All colors MUST be HSL.
   :root {
     /* Base colors - Light theme */
     --background: 220 100% 98%;
-    --foreground: 0 0% 100%;
+    --foreground: 0 0% 10%;
 
     /* Card colors */
     --card: 220 100% 95%;
-    --card-foreground: 0 0% 100%;
+    --card-foreground: 0 0% 10%;
 
     /* Popover colors */
     --popover: 220 100% 95%;
-    --popover-foreground: 0 0% 100%;
+    --popover-foreground: 0 0% 10%;
 
     /* Primary - Deep Blue */
     --primary: 220 85% 45%;
@@ -31,7 +31,7 @@ All colors MUST be HSL.
 
     /* Muted colors */
     --muted: 220 50% 90%;
-    --muted-foreground: 0 0% 95%;
+    --muted-foreground: 0 0% 40%;
 
     /* Accent - Bright Blue */
     --accent: 220 100% 55%;
@@ -64,11 +64,11 @@ All colors MUST be HSL.
 
     /* Sidebar colors - Light mode */
     --sidebar-background: 220 100% 98%;
-    --sidebar-foreground: 0 0% 100%;
+    --sidebar-foreground: 0 0% 10%;
     --sidebar-primary: 220 85% 45%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 220 50% 90%;
-    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-accent-foreground: 0 0% 10%;
     --sidebar-border: 220 30% 80%;
     --sidebar-ring: 220 85% 45%;
   }

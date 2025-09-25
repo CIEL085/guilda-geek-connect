@@ -36,30 +36,50 @@ const Index = () => {
       id: 1,
       name: "Sakura",
       age: 24,
-      image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=500&fit=crop",
+      image: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400&h=500&fit=crop&crop=face",
       interests: ["#onepiece", "#naruto", "#gaming", "#cosplay"]
     },
     {
       id: 2,
       name: "Akira",
       age: 26,
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=500&fit=crop",
+      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=500&fit=crop&crop=face",
       interests: ["#dragonball", "#pokemon", "#manga", "#anime"]
     },
     {
       id: 3,
       name: "Yuki",
       age: 22,
-      image: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400&h=500&fit=crop",
+      image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=500&fit=crop&crop=face",
       interests: ["#sailormoon", "#studioghibli", "#jrpg", "#kawaii"]
+    },
+    {
+      id: 4,
+      name: "Ryu",
+      age: 28,
+      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=500&fit=crop&crop=face",
+      interests: ["#streetfighter", "#tekken", "#fightinggames", "#arcade"]
+    },
+    {
+      id: 5,
+      name: "Luna",
+      age: 25,
+      image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=500&fit=crop&crop=face",
+      interests: ["#pokemon", "#zelda", "#nintendo", "#cute"]
+    },
+    {
+      id: 6,
+      name: "Kenji",
+      age: 27,
+      image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=500&fit=crop&crop=face",
+      interests: ["#finalfantasy", "#jrpg", "#squareenix", "#music"]
     }
   ];
 
   useEffect(() => {
-    if (user && currentView === "app") {
-      loadProfiles();
-    }
-  }, [user, currentView]);
+    // Use sample profiles for testing since we're not using real auth
+    setProfiles(sampleProfiles);
+  }, []);
 
   const loadProfiles = async () => {
     if (!user) return;
@@ -95,34 +115,23 @@ const Index = () => {
   };
 
   const handleSwipe = async (direction: "left" | "right") => {
-    if (!user || !profiles[profileIndex]) return;
+    if (!profiles[profileIndex]) return;
 
     const currentProfile = profiles[profileIndex];
     
-    // Record the swipe
-    const { data: existingProfile } = await supabase
-      .from('profiles')
-      .select('user_id')
-      .eq('user_id', currentProfile.id)
-      .single();
-
-    if (existingProfile) {
-      await supabase
-        .from('matches')
-        .upsert({
-          user_id: user.id,
-          matched_user_id: currentProfile.id,
-          liked: direction === "right"
-        });
-    }
-
     if (direction === "right") {
       toast({
         title: "Match enviado! 💙",
         description: `Você curtiu ${currentProfile.name}!`
       });
+    } else {
+      toast({
+        title: "Perfil descartado",
+        description: `Você não curtiu ${currentProfile.name}`
+      });
     }
     
+    // Move to next profile (cycle through the sample profiles)
     setProfileIndex((prev) => (prev + 1) % profiles.length);
   };
 
@@ -274,17 +283,17 @@ const Index = () => {
 
           {/* Stats */}
           <div className="mt-8 text-center">
-            <p className="text-muted-foreground">
+            <p className="text-foreground font-medium">
               Descubra otakus próximos de você
             </p>
             <div className="flex justify-center gap-6 mt-4">
               <div className="text-center">
                 <p className="text-2xl font-bold text-primary">12</p>
-                <p className="text-sm text-muted-foreground">Matches</p>
+                <p className="text-sm text-foreground">Matches</p>
               </div>
               <div className="text-center">
                 <p className="text-2xl font-bold text-accent">8</p>
-                <p className="text-sm text-muted-foreground">Conversas</p>
+                <p className="text-sm text-foreground">Conversas</p>
               </div>
             </div>
           </div>

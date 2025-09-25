@@ -29,7 +29,7 @@ export const HeroSection = ({ onEnter }: HeroSectionProps) => {
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
+          <div className="flex justify-center mb-16">
             <Button
               size="lg"
               className="bg-gradient-secondary hover:shadow-intense text-lg px-8 py-6 rounded-full"
@@ -37,13 +37,6 @@ export const HeroSection = ({ onEnter }: HeroSectionProps) => {
             >
               <Heart className="mr-2 h-5 w-5" />
               Começar agora
-            </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              className="text-lg px-8 py-6 rounded-full border-primary text-primary hover:bg-primary hover:text-primary-foreground"
-            >
-              Saiba mais
             </Button>
           </div>
         </div>

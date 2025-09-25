@@ -50,229 +50,87 @@ interface Message {
 
 export const ChatModal = ({ isOpen, onClose }: ChatModalProps) => {
   const [currentView, setCurrentView] = useState<'matches' | 'conversation'>('matches');
-  const [matches, setMatches] = useState<Match[]>([]);
-  const [conversations, setConversations] = useState<Conversation[]>([]);
-  const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [selectedConversation, setSelectedConversation] = useState<any>(null);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { user } = useAuth();
   const { toast } = useToast();
 
-  useEffect(() => {
-    if (user && isOpen) {
-      loadMatches();
-      loadConversations();
+  // Sample matches data for testing
+  const sampleMatches = [
+    {
+      id: '1',
+      matched_user_id: 'user1',
+      profiles: {
+        display_name: 'Sakura',
+        profile_photos: [{ photo_url: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400&h=500&fit=crop&crop=face', is_primary: true }]
+      }
+    },
+    {
+      id: '2',
+      matched_user_id: 'user2',
+      profiles: {
+        display_name: 'Akira',
+        profile_photos: [{ photo_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=500&fit=crop&crop=face', is_primary: true }]
+      }
     }
-  }, [user, isOpen]);
+  ];
+
+  // Sample conversations with messages
+  const [sampleConversations, setSampleConversations] = useState([
+    {
+      id: 'conv1',
+      user1_id: user?.id,
+      user2_id: 'user1',
+      profiles: {
+        display_name: 'Sakura',
+        profile_photos: [{ photo_url: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400&h=500&fit=crop&crop=face', is_primary: true }]
+      },
+      messages: [
+        {
+          id: 'msg1',
+          content: 'Oi! Vi que você curte One Piece também! 🏴‍☠️',
+          sender_id: 'user1',
+          created_at: new Date(Date.now() - 86400000).toISOString()
+        },
+        {
+          id: 'msg2',
+          content: 'Oi Sakura! Sim, sou super fã! Qual é o seu arco favorito?',
+          sender_id: user?.id,
+          created_at: new Date(Date.now() - 82800000).toISOString()
+        }
+      ]
+    }
+  ]);
+
+  const [messages, setMessages] = useState<any[]>([]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const loadMatches = async () => {
-    if (!user) return;
-
-    // Get mutual matches (both users liked each other)
-    const { data: myLikes } = await supabase
-      .from('matches')
-      .select('matched_user_id')
-      .eq('user_id', user.id)
-      .eq('liked', true);
-
-    if (!myLikes?.length) {
-      setMatches([]);
-      return;
-    }
-
-    const likedUserIds = myLikes.map(like => like.matched_user_id);
-
-    const { data: mutualMatches } = await supabase
-      .from('matches')
-      .select(`
-        id,
-        matched_user_id
-      `)
-      .eq('user_id', user.id)
-      .eq('liked', true)
-      .in('matched_user_id', likedUserIds);
-      
-    // Get profile data separately 
-    const matchesWithProfiles = await Promise.all(
-      (mutualMatches || []).map(async (match) => {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('display_name')
-          .eq('user_id', match.matched_user_id)
-          .single();
-          
-        const { data: photos } = await supabase
-          .from('profile_photos')
-          .select('photo_url, is_primary')
-          .eq('user_id', match.matched_user_id)
-          .order('is_primary', { ascending: false });
-          
-        return {
-          ...match,
-          profiles: {
-            display_name: profile?.display_name || '',
-            profile_photos: photos || []
-          }
-        };
-      })
-    );
-
-    if (matchesWithProfiles) {
-      // Filter for actual mutual matches
-      const mutualIds = await Promise.all(
-        matchesWithProfiles.map(async (match) => {
-          const { data: theirLike } = await supabase
-            .from('matches')
-            .select('id')
-            .eq('user_id', match.matched_user_id)
-            .eq('matched_user_id', user.id)
-            .eq('liked', true)
-            .maybeSingle();
-
-          return theirLike ? match : null;
-        })
-      );
-
-      setMatches(mutualIds.filter(Boolean) as Match[]);
-    }
-  };
-
-  const loadConversations = async () => {
-    if (!user) return;
-
-    const { data } = await supabase
-      .from('conversations')
-      .select(`
-        id,
-        user1_id,
-        user2_id,
-        messages(
-          id,
-          content,
-          sender_id,
-          created_at
-        )
-      `)
-      .or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`)
-      .order('created_at', { ascending: false });
-
-    // Get profiles separately
-    const conversationsWithProfiles = await Promise.all(
-      (data || []).map(async (conv) => {
-        const otherUserId = conv.user1_id === user.id ? conv.user2_id : conv.user1_id;
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('display_name')
-          .eq('user_id', otherUserId)
-          .single();
-          
-        const { data: photos } = await supabase
-          .from('profile_photos')
-          .select('photo_url, is_primary')
-          .eq('user_id', otherUserId)
-          .order('is_primary', { ascending: false });
-
-        return {
-          ...conv,
-          profiles: {
-            display_name: profile?.display_name || '',
-            profile_photos: photos || []
-          }
-        };
-      })
-    );
-
-    if (conversationsWithProfiles) {
-      setConversations(conversationsWithProfiles as any);
-    }
-  };
-
   const startConversation = async (matchedUserId: string) => {
-    if (!user) return;
+    const match = sampleMatches.find(m => m.matched_user_id === matchedUserId);
+    if (!match) return;
 
-    // Check if conversation already exists
-    const { data: existingConv } = await supabase
-      .from('conversations')
-      .select('*')
-      .or(
-        `and(user1_id.eq.${user.id},user2_id.eq.${matchedUserId}),and(user1_id.eq.${matchedUserId},user2_id.eq.${user.id})`
-      )
-      .maybeSingle();
+    const newConversation = {
+      id: `conv_${matchedUserId}`,
+      user1_id: user?.id,
+      user2_id: matchedUserId,
+      profiles: match.profiles,
+      messages: []
+    };
 
-    let conversationId;
-
-    if (existingConv) {
-      conversationId = existingConv.id;
-    } else {
-      const { data: newConv } = await supabase
-        .from('conversations')
-        .insert({
-          user1_id: user.id,
-          user2_id: matchedUserId
-        })
-        .select()
-        .single();
-
-      conversationId = newConv?.id;
-    }
-
-    if (conversationId) {
-      // Load the full conversation
-      const { data } = await supabase
-        .from('conversations')
-        .select(`
-          id,
-          user1_id,
-          user2_id
-        `)
-        .eq('id', conversationId)
-        .single();
-        
-      // Get other user's profile
-      const otherUserId = data?.user1_id === user.id ? data?.user2_id : data?.user1_id;
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('display_name')
-        .eq('user_id', otherUserId)
-        .single();
-        
-      const { data: photos } = await supabase
-        .from('profile_photos')
-        .select('photo_url, is_primary')
-        .eq('user_id', otherUserId)
-        .order('is_primary', { ascending: false });
-        
-      const conversationWithProfile = {
-        ...data,
-        profiles: {
-          display_name: profile?.display_name || '',
-          profile_photos: photos || []
-        }
-      };
-
-      if (conversationWithProfile) {
-        setSelectedConversation(conversationWithProfile as any);
-        loadMessages(conversationId);
-        setCurrentView('conversation');
-      }
-    }
+    setSelectedConversation(newConversation);
+    setMessages([]);
+    setCurrentView('conversation');
   };
 
-  const loadMessages = async (conversationId: string) => {
-    const { data } = await supabase
-      .from('messages')
-      .select('*')
-      .eq('conversation_id', conversationId)
-      .order('created_at', { ascending: true });
-
-    if (data) {
-      setMessages(data);
+  const loadMessages = (conversationId: string) => {
+    const conversation = sampleConversations.find(c => c.id === conversationId);
+    if (conversation) {
+      setMessages(conversation.messages);
     }
   };
 
@@ -281,32 +139,39 @@ export const ChatModal = ({ isOpen, onClose }: ChatModalProps) => {
 
     setLoading(true);
 
-    const { error } = await supabase
-      .from('messages')
-      .insert({
-        conversation_id: selectedConversation.id,
-        sender_id: user.id,
-        content: newMessage.trim()
-      });
+    const newMsg = {
+      id: `msg_${Date.now()}`,
+      content: newMessage.trim(),
+      sender_id: user.id,
+      created_at: new Date().toISOString()
+    };
 
-    if (!error) {
+    // Simulate message sending
+    setTimeout(() => {
+      setMessages(prev => [...prev, newMsg]);
       setNewMessage('');
-      loadMessages(selectedConversation.id);
-    } else {
+      setLoading(false);
+      
       toast({
-        variant: "destructive",
-        title: "Erro ao enviar",
-        description: "Não foi possível enviar a mensagem."
+        title: "Mensagem enviada!",
+        description: "Sua mensagem foi enviada com sucesso."
       });
-    }
 
-    setLoading(false);
+      // Simulate response after 2 seconds
+      setTimeout(() => {
+        const responseMsg = {
+          id: `msg_${Date.now() + 1}`,
+          content: "Interessante! Vamos conversar mais sobre isso! 😊",
+          sender_id: selectedConversation.user2_id,
+          created_at: new Date().toISOString()
+        };
+        setMessages(prev => [...prev, responseMsg]);
+      }, 2000);
+    }, 500);
   };
 
-  const getOtherUser = (conversation: Conversation) => {
-    return conversation.user1_id === user?.id 
-      ? conversation.profiles 
-      : conversation.profiles;
+  const getOtherUser = (conversation: any) => {
+    return conversation.profiles;
   };
 
   const getPrimaryPhoto = (photos: Array<{ photo_url: string; is_primary: boolean }>) => {
@@ -345,7 +210,7 @@ export const ChatModal = ({ isOpen, onClose }: ChatModalProps) => {
                   Novos Matches
                 </h3>
                 <div className="grid grid-cols-4 gap-2">
-                  {matches.map((match) => (
+                  {sampleMatches.map((match) => (
                     <button
                       key={match.id}
                       onClick={() => startConversation(match.matched_user_id)}
@@ -370,7 +235,7 @@ export const ChatModal = ({ isOpen, onClose }: ChatModalProps) => {
                   Conversas
                 </h3>
                 <div className="space-y-2">
-                  {conversations.map((conversation) => {
+                  {sampleConversations.map((conversation) => {
                     const otherUser = getOtherUser(conversation);
                     const lastMessage = conversation.messages?.[conversation.messages.length - 1];
                     
