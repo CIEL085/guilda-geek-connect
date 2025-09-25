@@ -168,7 +168,11 @@ const Index = () => {
 
   // Render different views based on current state
   if (currentView === "hero") {
-    return <HeroSection onEnter={() => setAuthModalOpen(true)} />;
+    console.log("Rendering hero section");
+    return <HeroSection onEnter={() => {
+      console.log("onEnter called from Index");
+      setAuthModalOpen(true);
+    }} />;
   }
 
   if (currentView === "auth") {

@@ -8,6 +8,13 @@ interface HeroSectionProps {
 }
 
 export const HeroSection = ({ onEnter }: HeroSectionProps) => {
+  console.log("HeroSection rendered, onEnter:", typeof onEnter);
+
+  const handleButtonClick = () => {
+    console.log("Button clicked!");
+    onEnter();
+  };
+
   return (
     <div className="min-h-screen bg-gradient-hero flex items-center justify-center p-4">
       <div className="container mx-auto max-w-4xl">
@@ -33,7 +40,7 @@ export const HeroSection = ({ onEnter }: HeroSectionProps) => {
             <Button
               size="lg"
               className="bg-gradient-secondary hover:shadow-intense text-lg px-8 py-6 rounded-full"
-              onClick={onEnter}
+              onClick={handleButtonClick}
             >
               <Heart className="mr-2 h-5 w-5" />
               Começar agora
