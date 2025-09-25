@@ -166,13 +166,28 @@ const Index = () => {
     );
   }
 
+  console.log("Current authModalOpen state:", authModalOpen);
+
   // Render different views based on current state
   if (currentView === "hero") {
     console.log("Rendering hero section");
-    return <HeroSection onEnter={() => {
-      console.log("onEnter called from Index");
-      setAuthModalOpen(true);
-    }} />;
+    return (
+      <>
+        <HeroSection onEnter={() => {
+          console.log("onEnter called from Index, setting authModalOpen to true");
+          setAuthModalOpen(true);
+        }} />
+        
+        {/* Modals - render here to ensure they're always available */}
+        <AuthModal 
+          isOpen={authModalOpen} 
+          onClose={() => {
+            console.log("AuthModal onClose called");
+            setAuthModalOpen(false);
+          }} 
+        />
+      </>
+    );
   }
 
   if (currentView === "auth") {
