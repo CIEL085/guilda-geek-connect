@@ -154,12 +154,11 @@ const Index = () => {
     setCurrentView("gender");
   };
 
-  // Skip authentication for testing - go directly to app
-  useEffect(() => {
-    if (!loading) {
-      setCurrentView("app");
-    }
-  }, [loading]);
+  // Handle auth modal completion - skip real auth for testing
+  const handleAuthModalComplete = () => {
+    setAuthModalOpen(false);
+    setCurrentView("app");
+  };
 
   // Show loading state
   if (loading) {
@@ -182,7 +181,8 @@ const Index = () => {
         {/* Modals - render here to ensure they're always available */}
         <AuthModal 
           isOpen={authModalOpen} 
-          onClose={() => setAuthModalOpen(false)} 
+          onClose={() => setAuthModalOpen(false)}
+          onComplete={handleAuthModalComplete}
         />
       </>
     );
@@ -303,7 +303,8 @@ const Index = () => {
       {/* Modals */}
       <AuthModal 
         isOpen={authModalOpen} 
-        onClose={() => setAuthModalOpen(false)} 
+        onClose={() => setAuthModalOpen(false)}
+        onComplete={handleAuthModalComplete}
       />
       <ProfileModal 
         isOpen={profileModalOpen} 

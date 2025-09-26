@@ -9,9 +9,10 @@ import { useToast } from '@/hooks/use-toast';
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onComplete?: () => void;
 }
 
-export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
+export const AuthModal = ({ isOpen, onClose, onComplete }: AuthModalProps) => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -23,53 +24,16 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-
-    try {
-      let result;
-      if (isSignUp) {
-        if (!fullName.trim()) {
-          toast({
-            variant: "destructive",
-            title: "Nome é obrigatório",
-            description: "Por favor, insira seu nome completo."
-          });
-          setLoading(false);
-          return;
-        }
-        result = await signUp(email, password, fullName);
-      } else {
-        result = await signIn(email, password);
-      }
-
-      if (result.error) {
-        toast({
-          variant: "destructive",
-          title: "Erro na autenticação",
-          description: result.error.message
-        });
-      } else {
-        if (isSignUp) {
-          toast({
-            title: "Conta criada!",
-            description: "Verifique seu email para confirmar a conta, ou faça login se já tem uma conta."
-          });
-        } else {
-          toast({
-            title: "Login realizado!",
-            description: "Bem-vindo de volta!"
-          });
-          onClose();
-        }
-      }
-    } catch (error) {
+    
+    // Simulate loading for better UX in test mode
+    setTimeout(() => {
       toast({
-        variant: "destructive",
-        title: "Erro inesperado",
-        description: "Tente novamente em alguns instantes."
+        title: "Sucesso!",
+        description: isSignUp ? "Conta criada com sucesso!" : "Login realizado com sucesso!"
       });
-    } finally {
       setLoading(false);
-    }
+      onComplete?.();
+    }, 1000);
   };
 
   return (
