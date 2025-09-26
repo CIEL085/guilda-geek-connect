@@ -8,12 +8,6 @@ import { Badge } from '@/components/ui/badge';
 import { MapPin, Heart, User, Users, ChevronRight, ChevronLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
-interface PreferencesModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onComplete: (preferences: any) => void;
-}
-
 const AVAILABLE_INTERESTS = [
   "#onepiece", "#naruto", "#dragonball", "#attackontitan", "#demonslayer",
   "#pokemon", "#zelda", "#finalfantasy", "#studioghibli", "#sailormoon",
@@ -23,24 +17,24 @@ const AVAILABLE_INTERESTS = [
   "#scifi", "#mecha", "#kawaii", "#otaku", "#convention", "#collectibles"
 ];
 
-export const PreferencesModal = ({ isOpen, onClose, onComplete }: PreferencesModalProps) => {
+export const PreferencesModal = ({ isOpen, onClose, onComplete }) => {
   const [step, setStep] = useState(1);
   const [preferences, setPreferences] = useState({
     genderPreference: '',
     location: '',
-    interests: [] as string[]
+    interests: []
   });
   const { toast } = useToast();
 
-  const handleGenderSelect = (gender: string) => {
+  const handleGenderSelect = (gender) => {
     setPreferences(prev => ({ ...prev, genderPreference: gender }));
   };
 
-  const handleLocationChange = (location: string) => {
+  const handleLocationChange = (location) => {
     setPreferences(prev => ({ ...prev, location }));
   };
 
-  const toggleInterest = (interest: string) => {
+  const toggleInterest = (interest) => {
     setPreferences(prev => ({
       ...prev,
       interests: prev.interests.includes(interest)

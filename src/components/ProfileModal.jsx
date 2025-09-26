@@ -12,19 +12,14 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { Upload, X, Camera } from 'lucide-react';
 
-interface ProfileModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
-
-export const ProfileModal = ({ isOpen, onClose }: ProfileModalProps) => {
+export const ProfileModal = ({ isOpen, onClose }) => {
   const [profile, setProfile] = useState({
     display_name: 'Usuário Teste',
     bio: 'Otaku apaixonado por animes e jogos!',
     age: '25',
-    interests: ['#onepiece', '#naruto', '#gaming'] as string[]
+    interests: ['#onepiece', '#naruto', '#gaming']
   });
-  const [photos, setPhotos] = useState<string[]>([
+  const [photos, setPhotos] = useState([
     'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=500&fit=crop&crop=face',
     'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=500&fit=crop&crop=face',
     'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=500&fit=crop&crop=face'
@@ -34,7 +29,7 @@ export const ProfileModal = ({ isOpen, onClose }: ProfileModalProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
 
-  const uploadPhoto = async (file: File) => {
+  const uploadPhoto = async (file) => {
     if (!user) return;
 
     setUploading(true);
@@ -43,8 +38,8 @@ export const ProfileModal = ({ isOpen, onClose }: ProfileModalProps) => {
     setTimeout(() => {
       const reader = new FileReader();
       reader.onload = (e) => {
-        if (e.target?.result) {
-          setPhotos(prev => [...prev, e.target!.result as string]);
+        if (e.target && e.target.result) {
+          setPhotos(prev => [...prev, e.target.result]);
           toast({
             title: "Foto adicionada!",
             description: "Sua foto foi enviada com sucesso."
@@ -56,7 +51,7 @@ export const ProfileModal = ({ isOpen, onClose }: ProfileModalProps) => {
     }, 1000);
   };
 
-  const removePhoto = async (photoUrl: string, index: number) => {
+  const removePhoto = async (photoUrl, index) => {
     setPhotos(prev => prev.filter((_, i) => i !== index));
     toast({
       title: "Foto removida",
@@ -89,7 +84,7 @@ export const ProfileModal = ({ isOpen, onClose }: ProfileModalProps) => {
     }, 1000);
   };
 
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = (e) => {
     const files = e.target.files;
     if (files && files[0]) {
       if (photos.length >= 8) {

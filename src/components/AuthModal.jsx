@@ -6,13 +6,7 @@ import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 
-interface AuthModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onComplete?: () => void;
-}
-
-export const AuthModal = ({ isOpen, onClose, onComplete }: AuthModalProps) => {
+export const AuthModal = ({ isOpen, onClose, onComplete }) => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -21,7 +15,7 @@ export const AuthModal = ({ isOpen, onClose, onComplete }: AuthModalProps) => {
   const { signUp, signIn } = useAuth();
   const { toast } = useToast();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     

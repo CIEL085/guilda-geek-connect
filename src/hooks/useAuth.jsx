@@ -1,19 +1,9 @@
-import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
-import { User, Session } from '@supabase/supabase-js';
+import { useState, useEffect, createContext, useContext } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
-interface AuthContextType {
-  user: User | null;
-  session: Session | null;
-  loading: boolean;
-  signUp: (email: string, password: string, fullName: string) => Promise<{ error: any }>;
-  signIn: (email: string, password: string) => Promise<{ error: any }>;
-  signOut: () => Promise<void>;
-}
+const AuthContext = createContext();
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
+export const AuthProvider = ({ children }) => {
   // Mock authentication for testing - simulate logged in user
   const mockUser = {
     id: 'test-user-123',
@@ -28,7 +18,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     last_sign_in_at: new Date().toISOString(),
     role: 'authenticated',
     updated_at: new Date().toISOString()
-  } as User;
+  };
 
   const mockSession = {
     access_token: 'mock-token',
@@ -36,18 +26,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     expires_in: 3600,
     token_type: 'bearer',
     user: mockUser
-  } as Session;
+  };
 
-  const [user] = useState<User | null>(mockUser);
-  const [session] = useState<Session | null>(mockSession);
+  const [user] = useState(mockUser);
+  const [session] = useState(mockSession);
   const [loading] = useState(false);
 
-  const signUp = async (email: string, password: string, fullName: string) => {
+  const signUp = async (email, password, fullName) => {
     // Mock signup - always succeeds for testing
     return { error: null };
   };
 
-  const signIn = async (email: string, password: string) => {
+  const signIn = async (email, password) => {
     // Mock signin - always succeeds for testing
     return { error: null };
   };
