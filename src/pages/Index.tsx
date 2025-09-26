@@ -9,6 +9,7 @@ import { AuthForm } from "@/components/AuthForm";
 import { GenderSelection } from "@/components/GenderSelection";
 import { InterestSelection } from "@/components/InterestSelection";
 import { AuthModal } from "@/components/AuthModal";
+import { PreferencesModal } from "@/components/PreferencesModal";
 import { ProfileModal } from "@/components/ProfileModal";
 import { ChatModal } from "@/components/ChatModal";
 import { useAuth } from "@/hooks/useAuth";
@@ -24,6 +25,7 @@ const Index = () => {
     tags?: string[];
   }>({});
   const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [preferencesModalOpen, setPreferencesModalOpen] = useState(false);
   const [profileModalOpen, setProfileModalOpen] = useState(false);
   const [chatModalOpen, setChatModalOpen] = useState(false);
   const [profiles, setProfiles] = useState<any[]>([]);
@@ -154,9 +156,16 @@ const Index = () => {
     setCurrentView("gender");
   };
 
-  // Handle auth modal completion - skip real auth for testing
+  // Handle auth modal completion - open preferences modal next
   const handleAuthModalComplete = () => {
     setAuthModalOpen(false);
+    setPreferencesModalOpen(true);
+  };
+
+  // Handle preferences modal completion - go to main app
+  const handlePreferencesComplete = (preferences: any) => {
+    setUserPreferences(prev => ({ ...prev, ...preferences }));
+    setPreferencesModalOpen(false);
     setCurrentView("app");
   };
 
@@ -183,6 +192,11 @@ const Index = () => {
           isOpen={authModalOpen} 
           onClose={() => setAuthModalOpen(false)}
           onComplete={handleAuthModalComplete}
+        />
+        <PreferencesModal 
+          isOpen={preferencesModalOpen} 
+          onClose={() => setPreferencesModalOpen(false)}
+          onComplete={handlePreferencesComplete}
         />
       </>
     );
@@ -305,6 +319,11 @@ const Index = () => {
         isOpen={authModalOpen} 
         onClose={() => setAuthModalOpen(false)}
         onComplete={handleAuthModalComplete}
+      />
+      <PreferencesModal 
+        isOpen={preferencesModalOpen} 
+        onClose={() => setPreferencesModalOpen(false)}
+        onComplete={handlePreferencesComplete}
       />
       <ProfileModal 
         isOpen={profileModalOpen} 
