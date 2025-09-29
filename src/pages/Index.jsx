@@ -17,18 +17,14 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
 const Index = () => {
-  const [currentView, setCurrentView] = useState<"hero" | "auth" | "gender" | "interests" | "app">("hero");
+  const [currentView, setCurrentView] = useState("hero");
   const [profileIndex, setProfileIndex] = useState(0);
-  const [userPreferences, setUserPreferences] = useState<{
-    userData?: any;
-    genderInterests?: string[];
-    tags?: string[];
-  }>({});
+  const [userPreferences, setUserPreferences] = useState({});
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [preferencesModalOpen, setPreferencesModalOpen] = useState(false);
   const [profileModalOpen, setProfileModalOpen] = useState(false);
   const [chatModalOpen, setChatModalOpen] = useState(false);
-  const [profiles, setProfiles] = useState<any[]>([]);
+  const [profiles, setProfiles] = useState([]);
   const { user, loading, signOut } = useAuth();
   const { toast } = useToast();
 
@@ -116,7 +112,7 @@ const Index = () => {
     }
   };
 
-  const handleSwipe = async (direction: "left" | "right") => {
+  const handleSwipe = async (direction) => {
     if (!profiles[profileIndex]) return;
 
     const currentProfile = profiles[profileIndex];
@@ -137,17 +133,17 @@ const Index = () => {
     setProfileIndex((prev) => (prev + 1) % profiles.length);
   };
 
-  const handleAuthComplete = (userData: any) => {
+  const handleAuthComplete = (userData) => {
     setUserPreferences(prev => ({ ...prev, userData }));
     setCurrentView("gender");
   };
 
-  const handleGenderComplete = (genderInterests: string[]) => {
+  const handleGenderComplete = (genderInterests) => {
     setUserPreferences(prev => ({ ...prev, genderInterests }));
     setCurrentView("interests");
   };
 
-  const handleInterestComplete = (tags: string[]) => {
+  const handleInterestComplete = (tags) => {
     setUserPreferences(prev => ({ ...prev, tags }));
     setCurrentView("app");
   };
@@ -163,7 +159,7 @@ const Index = () => {
   };
 
   // Handle preferences modal completion - go to main app
-  const handlePreferencesComplete = (preferences: any) => {
+  const handlePreferencesComplete = (preferences) => {
     setUserPreferences(prev => ({ ...prev, ...preferences }));
     setPreferencesModalOpen(false);
     setCurrentView("app");
