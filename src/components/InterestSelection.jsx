@@ -4,15 +4,10 @@ import { Card } from "@/components/ui/card";
 import { ArrowRight, ArrowLeft, Sparkles } from "lucide-react";
 import { InterestTags } from "@/components/InterestTags";
 
-interface InterestSelectionProps {
-  onComplete: (interests: string[]) => void;
-  onBack: () => void;
-}
+export const InterestSelection = ({ onComplete, onBack }) => {
+  const [selectedInterests, setSelectedInterests] = useState([]);
 
-export const InterestSelection = ({ onComplete, onBack }: InterestSelectionProps) => {
-  const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
-
-  const handleTagToggle = (tag: string) => {
+  const handleTagToggle = (tag) => {
     setSelectedInterests(prev => 
       prev.includes(tag)
         ? prev.filter(t => t !== tag)

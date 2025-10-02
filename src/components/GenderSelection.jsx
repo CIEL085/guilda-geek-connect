@@ -5,12 +5,8 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Heart, Users, ArrowRight } from "lucide-react";
 
-interface GenderSelectionProps {
-  onComplete: (interests: string[]) => void;
-}
-
-export const GenderSelection = ({ onComplete }: GenderSelectionProps) => {
-  const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
+export const GenderSelection = ({ onComplete }) => {
+  const [selectedInterests, setSelectedInterests] = useState([]);
 
   const genderOptions = [
     { id: "women", label: "Mulheres", icon: "♀" },
@@ -19,7 +15,7 @@ export const GenderSelection = ({ onComplete }: GenderSelectionProps) => {
     { id: "everyone", label: "Todos os Gêneros", icon: "🌈" }
   ];
 
-  const toggleInterest = (interest: string) => {
+  const toggleInterest = (interest) => {
     setSelectedInterests(prev => 
       prev.includes(interest) 
         ? prev.filter(i => i !== interest)

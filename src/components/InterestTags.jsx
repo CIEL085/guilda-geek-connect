@@ -12,18 +12,11 @@ const popularInterests = [
   "#shonen", "#shoujo", "#seinen", "#josei", "#isekai", "#mecha"
 ];
 
-interface InterestTagsProps {
-  selectedTags: string[];
-  onTagToggle?: (tag: string) => void;
-  onTagsChange?: (tags: string[]) => void;
-  maxTags?: number;
-}
-
-export const InterestTags = ({ selectedTags, onTagToggle, onTagsChange, maxTags = 10 }: InterestTagsProps) => {
-  const isSelected = (tag: string) => selectedTags.includes(tag);
+export const InterestTags = ({ selectedTags, onTagToggle, onTagsChange, maxTags = 10 }) => {
+  const isSelected = (tag) => selectedTags.includes(tag);
   const canSelect = selectedTags.length < maxTags;
 
-  const handleTagClick = (tag: string) => {
+  const handleTagClick = (tag) => {
     const selected = isSelected(tag);
     const canToggle = selected || canSelect;
     

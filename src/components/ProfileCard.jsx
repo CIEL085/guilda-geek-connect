@@ -2,31 +2,18 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useState, useRef } from "react";
 
-interface Profile {
-  id: number;
-  name: string;
-  age: number;
-  image: string;
-  interests: string[];
-}
-
-interface ProfileCardProps {
-  profile: Profile;
-  onSwipe: (direction: "left" | "right") => void;
-}
-
-export const ProfileCard = ({ profile, onSwipe }: ProfileCardProps) => {
+export const ProfileCard = ({ profile, onSwipe }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState(0);
   const [startX, setStartX] = useState(0);
-  const cardRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef(null);
 
-  const handleMouseDown = (e: React.MouseEvent) => {
+  const handleMouseDown = (e) => {
     setIsDragging(true);
     setStartX(e.clientX);
   };
 
-  const handleMouseMove = (e: React.MouseEvent) => {
+  const handleMouseMove = (e) => {
     if (!isDragging) return;
     const currentX = e.clientX;
     const offset = currentX - startX;
@@ -47,12 +34,12 @@ export const ProfileCard = ({ profile, onSwipe }: ProfileCardProps) => {
     }
   };
 
-  const handleTouchStart = (e: React.TouchEvent) => {
+  const handleTouchStart = (e) => {
     setIsDragging(true);
     setStartX(e.touches[0].clientX);
   };
 
-  const handleTouchMove = (e: React.TouchEvent) => {
+  const handleTouchMove = (e) => {
     if (!isDragging) return;
     const currentX = e.touches[0].clientX;
     const offset = currentX - startX;
@@ -63,7 +50,7 @@ export const ProfileCard = ({ profile, onSwipe }: ProfileCardProps) => {
     handleMouseUp();
   };
 
-  const animateSwipe = (direction: "left" | "right") => {
+  const animateSwipe = (direction) => {
     const targetX = direction === "right" ? 400 : -400;
     setDragOffset(targetX);
     
@@ -79,7 +66,7 @@ export const ProfileCard = ({ profile, onSwipe }: ProfileCardProps) => {
     return Math.max(-maxRotation, Math.min(maxRotation, rotation));
   };
 
-  const getOpacity = (type: "like" | "pass") => {
+  const getOpacity = (type) => {
     if (type === "like") {
       return Math.max(0, dragOffset / 100);
     } else {

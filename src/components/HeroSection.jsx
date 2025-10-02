@@ -3,11 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Heart, Gamepad2, BookOpen, Users } from "lucide-react";
 import heroImage from "@/assets/guilda-hero-bwr.jpg";
 
-interface HeroSectionProps {
-  onEnter: () => void;
-}
-
-export const HeroSection = ({ onEnter }: HeroSectionProps) => {
+export const HeroSection = ({ onEnter }) => {
   return (
     <div className="min-h-screen bg-gradient-hero flex items-center justify-center p-4">
       <div className="container mx-auto max-w-4xl">

@@ -6,11 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Heart, Mail, Lock, User, Phone } from "lucide-react";
 
-interface AuthFormProps {
-  onComplete: (userData: any) => void;
-}
-
-export const AuthForm = ({ onComplete }: AuthFormProps) => {
+export const AuthForm = ({ onComplete }) => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -19,11 +15,11 @@ export const AuthForm = ({ onComplete }: AuthFormProps) => {
     confirmPassword: ""
   });
 
-  const handleInputChange = (field: string, value: string) => {
+  const handleInputChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = (type: "login" | "register") => {
+  const handleSubmit = (type) => {
     // Aqui seria a integração com o backend (Supabase)
     console.log(`${type} attempt:`, formData);
     onComplete({ ...formData, type });
