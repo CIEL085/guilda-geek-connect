@@ -2,39 +2,39 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Guilda Design System - Blue & White Theme 
+/* Guilda Design System - Futuristic Neon Theme 
 All colors MUST be HSL.
 */
 
 @layer base {
   :root {
     /* Base colors - Light theme */
-    --background: 220 100% 98%;
+    --background: 240 20% 98%;
     --foreground: 0 0% 10%;
 
     /* Card colors */
-    --card: 220 100% 95%;
+    --card: 240 15% 96%;
     --card-foreground: 0 0% 10%;
 
     /* Popover colors */
-    --popover: 220 100% 95%;
+    --popover: 240 15% 96%;
     --popover-foreground: 0 0% 10%;
 
-    /* Primary - Deep Blue */
-    --primary: 220 85% 45%;
+    /* Primary - Neon Blue */
+    --primary: 195 100% 50%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 220 95% 60%;
+    --primary-glow: 195 100% 65%;
 
-    /* Secondary - Dark Blue */
-    --secondary: 220 75% 25%;
+    /* Secondary - Cosmic Purple */
+    --secondary: 280 85% 40%;
     --secondary-foreground: 0 0% 100%;
 
     /* Muted colors */
-    --muted: 220 50% 90%;
+    --muted: 240 10% 90%;
     --muted-foreground: 0 0% 40%;
 
-    /* Accent - Bright Blue */
-    --accent: 220 100% 55%;
+    /* Accent - Magenta Pink */
+    --accent: 320 100% 50%;
     --accent-foreground: 0 0% 100%;
 
     /* Destructive */
@@ -42,95 +42,103 @@ All colors MUST be HSL.
     --destructive-foreground: 0 0% 100%;
 
     /* Border and input */
-    --border: 220 30% 80%;
-    --input: 220 30% 80%;
-    --ring: 220 85% 45%;
+    --border: 240 15% 85%;
+    --input: 240 15% 85%;
+    --ring: 195 100% 50%;
 
-    /* Custom Guilda tokens */
-    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
-    --gradient-secondary: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--accent)));
-    --gradient-hero: linear-gradient(135deg, hsl(220 100% 15%) 0%, hsl(var(--primary)) 50%, hsl(220 75% 25%) 100%);
+    /* Custom Guilda Neon tokens */
+    --gradient-primary: linear-gradient(135deg, hsl(195 100% 50%), hsl(280 85% 50%));
+    --gradient-secondary: linear-gradient(135deg, hsl(280 85% 40%), hsl(320 100% 50%));
+    --gradient-hero: linear-gradient(135deg, hsl(240 30% 5%) 0%, hsl(280 50% 15%) 50%, hsl(195 50% 20%) 100%);
+    --gradient-neon: linear-gradient(90deg, hsl(195 100% 50%), hsl(280 85% 50%), hsl(320 100% 50%));
     
-    /* Shadows inspired by blue glow effects */
-    --shadow-card: 0 4px 20px -4px hsl(var(--primary) / 0.2);
-    --shadow-glow: 0 0 30px hsl(var(--primary) / 0.4);
-    --shadow-intense: 0 8px 40px -8px hsl(var(--accent) / 0.5);
+    /* Shadows with neon glow */
+    --shadow-card: 0 4px 20px -4px hsl(195 100% 50% / 0.3);
+    --shadow-glow: 0 0 40px hsl(195 100% 50% / 0.6), 0 0 20px hsl(280 85% 50% / 0.4);
+    --shadow-intense: 0 8px 40px -8px hsl(320 100% 50% / 0.7);
+    --shadow-neon-blue: 0 0 30px hsl(195 100% 50% / 0.8);
+    --shadow-neon-purple: 0 0 30px hsl(280 85% 50% / 0.8);
+    --shadow-neon-pink: 0 0 30px hsl(320 100% 50% / 0.8);
 
     /* Animations */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
     /* Sidebar colors - Light mode */
-    --sidebar-background: 220 100% 98%;
+    --sidebar-background: 240 20% 98%;
     --sidebar-foreground: 0 0% 10%;
-    --sidebar-primary: 220 85% 45%;
+    --sidebar-primary: 195 100% 50%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 50% 90%;
+    --sidebar-accent: 240 10% 90%;
     --sidebar-accent-foreground: 0 0% 10%;
-    --sidebar-border: 220 30% 80%;
-    --sidebar-ring: 220 85% 45%;
+    --sidebar-border: 240 15% 85%;
+    --sidebar-ring: 195 100% 50%;
   }
 
   .dark {
-    /* Base colors - Dark theme (Blue & White) */
-    --background: 220 100% 8%;
-    --foreground: 0 0% 95%;
+    /* Base colors - Dark theme (Neon Space) */
+    --background: 240 30% 5%;
+    --foreground: 0 0% 98%;
 
     /* Card colors */
-    --card: 220 85% 12%;
-    --card-foreground: 0 0% 95%;
+    --card: 240 25% 10%;
+    --card-foreground: 0 0% 98%;
 
     /* Popover colors */
-    --popover: 220 85% 12%;
-    --popover-foreground: 0 0% 95%;
+    --popover: 240 25% 10%;
+    --popover-foreground: 0 0% 98%;
 
-    /* Primary - Bright Blue for dark mode */
-    --primary: 220 95% 65%;
-    --primary-foreground: 220 100% 8%;
-    --primary-glow: 220 100% 75%;
+    /* Primary - Neon Blue */
+    --primary: 195 100% 60%;
+    --primary-foreground: 240 30% 5%;
+    --primary-glow: 195 100% 75%;
 
-    /* Secondary - Dark Blue */
-    --secondary: 220 75% 20%;
-    --secondary-foreground: 0 0% 95%;
+    /* Secondary - Cosmic Purple */
+    --secondary: 280 85% 50%;
+    --secondary-foreground: 0 0% 98%;
 
     /* Muted colors */
-    --muted: 220 50% 15%;
-    --muted-foreground: 0 0% 75%;
+    --muted: 240 20% 15%;
+    --muted-foreground: 0 0% 70%;
 
-    /* Accent - Vibrant Blue */
-    --accent: 220 100% 70%;
-    --accent-foreground: 220 100% 8%;
+    /* Accent - Magenta Pink */
+    --accent: 320 100% 60%;
+    --accent-foreground: 240 30% 5%;
 
     /* Destructive */
     --destructive: 0 75% 55%;
-    --destructive-foreground: 0 0% 95%;
+    --destructive-foreground: 0 0% 98%;
 
     /* Border and input */
-    --border: 220 50% 20%;
-    --input: 220 50% 20%;
-    --ring: 220 95% 65%;
+    --border: 240 20% 20%;
+    --input: 240 20% 20%;
+    --ring: 195 100% 60%;
 
-    /* Custom Guilda tokens - Dark mode */
-    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
-    --gradient-secondary: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--accent)));
-    --gradient-hero: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 50%, hsl(var(--accent)) 100%);
+    /* Custom Guilda Neon tokens - Dark mode */
+    --gradient-primary: linear-gradient(135deg, hsl(195 100% 60%), hsl(280 85% 60%));
+    --gradient-secondary: linear-gradient(135deg, hsl(280 85% 50%), hsl(320 100% 60%));
+    --gradient-hero: linear-gradient(135deg, hsl(240 30% 5%) 0%, hsl(280 50% 15%) 50%, hsl(195 50% 20%) 100%);
+    --gradient-neon: linear-gradient(90deg, hsl(195 100% 60%), hsl(280 85% 60%), hsl(320 100% 60%));
     
-    /* Shadows for dark mode */
-    --shadow-card: 0 4px 20px -4px hsl(var(--primary) / 0.3);
-    --shadow-glow: 0 0 30px hsl(var(--primary) / 0.5);
-    --shadow-intense: 0 8px 40px -8px hsl(var(--accent) / 0.6);
+    /* Shadows with neon glow - Dark mode */
+    --shadow-card: 0 4px 20px -4px hsl(195 100% 60% / 0.4);
+    --shadow-glow: 0 0 40px hsl(195 100% 60% / 0.7), 0 0 20px hsl(280 85% 60% / 0.5);
+    --shadow-intense: 0 8px 40px -8px hsl(320 100% 60% / 0.8);
+    --shadow-neon-blue: 0 0 40px hsl(195 100% 60% / 0.9);
+    --shadow-neon-purple: 0 0 40px hsl(280 85% 60% / 0.9);
+    --shadow-neon-pink: 0 0 40px hsl(320 100% 60% / 0.9);
 
     /* Sidebar colors for dark mode */
-    --sidebar-background: 220 100% 8%;
-    --sidebar-foreground: 0 0% 95%;
-    --sidebar-primary: 220 95% 65%;
+    --sidebar-background: 240 30% 5%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 195 100% 60%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 50% 15%;
-    --sidebar-accent-foreground: 0 0% 95%;
-    --sidebar-border: 220 50% 15%;
-    --sidebar-ring: 220 95% 65%;
+    --sidebar-accent: 240 20% 15%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 240 20% 20%;
+    --sidebar-ring: 195 100% 60%;
   }
 }
 
@@ -140,6 +148,50 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
+    font-family: 'Rajdhani', sans-serif;
   }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Orbitron', sans-serif;
+  }
+}
+
+/* Neon animations */
+@keyframes neon-pulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 5px currentColor) drop-shadow(0 0 15px currentColor);
+  }
+  50% {
+    filter: drop-shadow(0 0 10px currentColor) drop-shadow(0 0 25px currentColor);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes particle-float {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  33% {
+    transform: translate(100px, -100px);
+  }
+  66% {
+    transform: translate(-100px, 50px);
+  }
+}
+
+.neon-pulse {
+  animation: neon-pulse 2s ease-in-out infinite;
+}
+
+.float-animation {
+  animation: float 6s ease-in-out infinite;
 }

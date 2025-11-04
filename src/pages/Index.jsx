@@ -12,6 +12,8 @@ import { AuthModal } from "@/components/AuthModal";
 import { PreferencesModal } from "@/components/PreferencesModal";
 import { ProfileModal } from "@/components/ProfileModal";
 import { ChatModal } from "@/components/ChatModal";
+import { AnimatedBackground } from "@/components/AnimatedBackground";
+import { AIChatSupport } from "@/components/AIChatSupport";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -216,43 +218,48 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-hero">
+    <div className="min-h-screen bg-gradient-hero relative overflow-hidden">
+      <AnimatedBackground />
+      
       {/* Header */}
-      <header className="flex items-center justify-between p-6 bg-background/80 backdrop-blur-md border-b">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-gradient-primary"></div>
-          <h1 className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-            Guilda
+      <header className="flex items-center justify-between p-6 bg-card/30 backdrop-blur-xl border-b border-primary/30 relative z-10">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-gradient-neon shadow-neon-blue"></div>
+          <h1 className="text-3xl font-orbitron font-bold bg-gradient-neon bg-clip-text text-transparent">
+            GUILDA
           </h1>
         </div>
         
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <Button 
             variant="ghost" 
             size="icon"
             onClick={() => setChatModalOpen(true)}
+            className="hover:bg-primary/20 hover:shadow-neon-blue transition-all"
           >
-            <MessageCircle className="h-5 w-5" />
+            <MessageCircle className="h-6 w-6 text-primary" />
           </Button>
           <Button 
             variant="ghost" 
             size="icon"
             onClick={() => setProfileModalOpen(true)}
+            className="hover:bg-secondary/20 hover:shadow-neon-purple transition-all"
           >
-            <User className="h-5 w-5" />
+            <User className="h-6 w-6 text-secondary" />
           </Button>
           <Button 
             variant="ghost" 
             size="icon"
             onClick={signOut}
+            className="hover:bg-accent/20 hover:shadow-neon-pink transition-all"
           >
-            <LogOut className="h-5 w-5" />
+            <LogOut className="h-6 w-6 text-accent" />
           </Button>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-8 relative z-10">
         <div className="flex flex-col items-center max-w-md mx-auto">
           {/* Profile Card */}
           <div className="mb-8 w-full">
@@ -262,8 +269,8 @@ const Index = () => {
                 onSwipe={handleSwipe}
               />
             ) : (
-              <Card className="aspect-[3/4] flex items-center justify-center">
-                <p className="text-muted-foreground text-center">
+              <Card className="aspect-[3/4] flex items-center justify-center border-2 border-primary/30 bg-card/80 backdrop-blur-sm">
+                <p className="text-muted-foreground text-center font-orbitron">
                   Carregando perfis...
                 </p>
               </Card>
@@ -271,44 +278,47 @@ const Index = () => {
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-8">
             <Button
               variant="outline"
               size="lg"
-              className="rounded-full w-16 h-16 border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground shadow-glow"
+              className="rounded-full w-20 h-20 border-2 border-destructive text-destructive hover:bg-destructive hover:text-white shadow-neon-pink hover:shadow-intense hover:scale-110 transition-all duration-300"
               onClick={() => handleSwipe("left")}
             >
-              <X className="h-6 w-6" />
+              <X className="h-8 w-8" />
             </Button>
             
             <Button
               variant="default"
               size="lg"
-              className="rounded-full w-16 h-16 bg-gradient-secondary hover:shadow-intense shadow-glow"
+              className="rounded-full w-20 h-20 bg-gradient-primary hover:shadow-neon-blue shadow-glow hover:scale-110 transition-all duration-300"
               onClick={() => handleSwipe("right")}
             >
-              <Heart className="h-6 w-6" />
+              <Heart className="h-8 w-8" />
             </Button>
           </div>
 
           {/* Stats */}
-          <div className="mt-8 text-center">
-            <p className="text-foreground font-medium">
+          <div className="mt-12 text-center">
+            <p className="text-foreground font-orbitron font-bold text-lg mb-6">
               Descubra otakus próximos de você
             </p>
-            <div className="flex justify-center gap-6 mt-4">
-              <div className="text-center">
-                <p className="text-2xl font-bold text-primary">12</p>
-                <p className="text-sm text-foreground">Matches</p>
+            <div className="flex justify-center gap-8">
+              <div className="text-center p-4 rounded-xl bg-primary/10 border-2 border-primary/30 backdrop-blur-sm min-w-[100px]">
+                <p className="text-4xl font-orbitron font-bold text-primary neon-pulse">12</p>
+                <p className="text-sm text-muted-foreground font-semibold mt-1">Matches</p>
               </div>
-              <div className="text-center">
-                <p className="text-2xl font-bold text-accent">8</p>
-                <p className="text-sm text-foreground">Conversas</p>
+              <div className="text-center p-4 rounded-xl bg-accent/10 border-2 border-accent/30 backdrop-blur-sm min-w-[100px]">
+                <p className="text-4xl font-orbitron font-bold text-accent neon-pulse">8</p>
+                <p className="text-sm text-muted-foreground font-semibold mt-1">Conversas</p>
               </div>
             </div>
           </div>
         </div>
       </main>
+
+      {/* AI Chat Support */}
+      <AIChatSupport />
 
       {/* Modals */}
       <AuthModal 

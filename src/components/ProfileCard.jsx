@@ -76,7 +76,7 @@ export const ProfileCard = ({ profile, onSwipe }) => {
   return (
     <Card 
       ref={cardRef}
-      className="relative w-full aspect-[3/4] overflow-hidden shadow-card hover:shadow-intense transition-all duration-300 cursor-pointer group select-none"
+      className="relative w-full aspect-[3/4] overflow-hidden shadow-neon-blue hover:shadow-intense transition-all duration-300 cursor-pointer group select-none border-2 border-primary/40"
       style={{
         transform: `translateX(${dragOffset}px) rotate(${getRotation()}deg)`,
         transition: isDragging ? 'none' : 'transform 0.3s ease-out'
@@ -94,41 +94,46 @@ export const ProfileCard = ({ profile, onSwipe }) => {
         className="absolute inset-0 bg-cover bg-center transition-transform duration-300 group-hover:scale-105"
         style={{ backgroundImage: `url(${profile.image})` }}
       >
-        {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+        {/* Gradient Overlay with neon effect */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A1A] via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-accent/10 opacity-50" />
       </div>
 
+      {/* Neon border animation */}
+      <div className="absolute inset-0 border-2 border-transparent group-hover:border-primary/50 transition-all duration-300 rounded-lg"></div>
+
       {/* Swipe Indicators */}
-      <div className="absolute top-4 left-4 right-4 flex justify-between pointer-events-none">
+      <div className="absolute top-4 left-4 right-4 flex justify-between pointer-events-none z-10">
         <div 
-          className="w-20 h-20 rounded-full bg-destructive/20 backdrop-blur-sm border-4 border-destructive flex items-center justify-center transition-opacity"
+          className="w-24 h-24 rounded-full bg-destructive/20 backdrop-blur-md border-4 border-destructive flex items-center justify-center transition-opacity shadow-neon-pink"
           style={{ opacity: getOpacity("pass") }}
         >
-          <span className="text-destructive font-bold text-2xl">✕</span>
+          <span className="text-destructive font-bold text-3xl">✕</span>
         </div>
         <div 
-          className="w-20 h-20 rounded-full bg-primary/20 backdrop-blur-sm border-4 border-primary flex items-center justify-center transition-opacity"
+          className="w-24 h-24 rounded-full bg-primary/20 backdrop-blur-md border-4 border-primary flex items-center justify-center transition-opacity shadow-neon-blue"
           style={{ opacity: getOpacity("like") }}
         >
-          <span className="text-primary font-bold text-2xl">♥</span>
+          <span className="text-primary font-bold text-3xl">♥</span>
         </div>
       </div>
 
       {/* Content */}
-      <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-        <div className="mb-3">
-          <h3 className="text-2xl font-bold mb-1">
+      <div className="absolute bottom-0 left-0 right-0 p-6 text-white bg-gradient-to-t from-black/90 to-transparent">
+        <div className="mb-4">
+          <h3 className="text-3xl font-orbitron font-bold mb-1 text-shadow-lg">
             {profile.name}, {profile.age}
           </h3>
         </div>
 
-        {/* Interests */}
+        {/* Interests with neon effect */}
         <div className="flex flex-wrap gap-2">
           {profile.interests.map((interest, index) => (
             <Badge
               key={index}
               variant="secondary"
-              className="bg-primary/20 text-white border-primary/30 hover:bg-primary/30 transition-colors"
+              className="bg-primary/20 text-white border-2 border-primary/50 hover:bg-primary/30 hover:shadow-neon-blue transition-all font-semibold backdrop-blur-sm neon-pulse"
+              style={{ animationDelay: `${index * 0.2}s` }}
             >
               {interest}
             </Badge>
@@ -136,13 +141,13 @@ export const ProfileCard = ({ profile, onSwipe }) => {
         </div>
       </div>
 
-      {/* Hover Indicators (original) */}
-      <div className="absolute top-4 left-4 right-4 flex justify-between opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-        <div className="w-12 h-12 rounded-full bg-destructive/20 backdrop-blur-sm border border-destructive/30 flex items-center justify-center">
-          <span className="text-destructive font-bold">✕</span>
+      {/* Hover Indicators */}
+      <div className="absolute top-4 left-4 right-4 flex justify-between opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+        <div className="w-14 h-14 rounded-full bg-destructive/30 backdrop-blur-md border-2 border-destructive/50 flex items-center justify-center shadow-neon-pink">
+          <span className="text-destructive font-bold text-xl">✕</span>
         </div>
-        <div className="w-12 h-12 rounded-full bg-primary/20 backdrop-blur-sm border border-primary/30 flex items-center justify-center">
-          <span className="text-primary font-bold">♥</span>
+        <div className="w-14 h-14 rounded-full bg-primary/30 backdrop-blur-md border-2 border-primary/50 flex items-center justify-center shadow-neon-blue">
+          <span className="text-primary font-bold text-xl">♥</span>
         </div>
       </div>
     </Card>

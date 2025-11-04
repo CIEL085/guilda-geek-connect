@@ -61,11 +61,19 @@ export default {
         "gradient-primary": "var(--gradient-primary)",
         "gradient-secondary": "var(--gradient-secondary)",
         "gradient-hero": "var(--gradient-hero)",
+        "gradient-neon": "var(--gradient-neon)",
       },
       boxShadow: {
         "card": "var(--shadow-card)",
         "glow": "var(--shadow-glow)",
         "intense": "var(--shadow-intense)",
+        "neon-blue": "var(--shadow-neon-blue)",
+        "neon-purple": "var(--shadow-neon-purple)",
+        "neon-pink": "var(--shadow-neon-pink)",
+      },
+      fontFamily: {
+        orbitron: ['Orbitron', 'sans-serif'],
+        rajdhani: ['Rajdhani', 'sans-serif'],
       },
       transitionTimingFunction: {
         "smooth": "var(--transition-smooth)",
@@ -97,6 +105,9 @@ export default {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "neon-pulse": "neon-pulse 2s ease-in-out infinite",
+        "float": "float 6s ease-in-out infinite",
+        "particle-float": "particle-float 20s ease-in-out infinite",
       },
     },
   },
