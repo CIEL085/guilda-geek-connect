@@ -29,6 +29,48 @@ export const ProfileModal = ({ isOpen, onClose }) => {
   const { user } = useAuth();
   const { toast } = useToast();
 
+  // Carrega o perfil do usuário ao abrir o modal
+  useEffect(() => {
+    if (isOpen && user) {
+      loadProfile();
+    }
+  }, [isOpen, user]);
+
+  const loadProfile = async () => {
+    if (!user) return;
+
+    try {
+      // Busca perfil
+      const { data: profileData } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('user_id', user.id)
+        .single();
+
+      if (profileData) {
+        setProfile({
+          display_name: profileData.display_name || '',
+          bio: profileData.bio || '',
+          age: profileData.age?.toString() || '',
+          interests: profileData.interests || []
+        });
+
+        // Busca fotos
+        const { data: photosData } = await supabase
+          .from('profile_photos')
+          .select('photo_url, is_primary')
+          .eq('user_id', user.id)
+          .order('is_primary', { ascending: false });
+
+        if (photosData && photosData.length > 0) {
+          setPhotos(photosData.map(p => p.photo_url));
+        }
+      }
+    } catch (error) {
+      console.error('Error loading profile:', error);
+    }
+  };
+
   const uploadPhoto = async (file) => {
     if (!user) return;
 
@@ -73,15 +115,80 @@ export const ProfileModal = ({ isOpen, onClose }) => {
 
     setLoading(true);
 
-    // Simulate save delay
-    setTimeout(() => {
+    try {
+      // Verifica se o perfil já existe
+      const { data: existingProfile } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('user_id', user.id)
+        .single();
+
+      // Salva ou atualiza o perfil
+      if (existingProfile) {
+        // Atualiza perfil existente
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .update({
+            display_name: profile.display_name,
+            bio: profile.bio,
+            age: parseInt(profile.age),
+            interests: profile.interests,
+            updated_at: new Date().toISOString()
+          })
+          .eq('user_id', user.id);
+
+        if (profileError) throw profileError;
+      } else {
+        // Cria novo perfil
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .insert({
+            user_id: user.id,
+            display_name: profile.display_name,
+            bio: profile.bio,
+            age: parseInt(profile.age),
+            interests: profile.interests
+          });
+
+        if (profileError) throw profileError;
+      }
+
+      // Salva as fotos (remove fotos antigas e adiciona novas)
+      const { error: deleteError } = await supabase
+        .from('profile_photos')
+        .delete()
+        .eq('user_id', user.id);
+
+      if (deleteError) throw deleteError;
+
+      // Adiciona novas fotos
+      const photoInserts = photos.map((photoUrl, index) => ({
+        user_id: user.id,
+        photo_url: photoUrl,
+        is_primary: index === 0
+      }));
+
+      const { error: photosError } = await supabase
+        .from('profile_photos')
+        .insert(photoInserts);
+
+      if (photosError) throw photosError;
+
       toast({
-        title: "Perfil atualizado!",
-        description: "Suas informações foram salvas."
+        title: "Perfil salvo!",
+        description: "Suas informações foram salvas com sucesso."
       });
       onClose();
+    } catch (error) {
+      console.error('Error saving profile:', error);
+      toast({
+        variant: "destructive",
+        title: "Erro ao salvar perfil",
+        description: error.message || "Tente novamente mais tarde."
+      });
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   const handleFileSelect = (e) => {

@@ -7,6 +7,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { MapPin, Heart, User, Users, ChevronRight, ChevronLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { filterCities } from '@/data/brazilianCities';
 
 const AVAILABLE_INTERESTS = [
   "#onepiece", "#naruto", "#dragonball", "#attackontitan", "#demonslayer",
@@ -24,6 +25,8 @@ export const PreferencesModal = ({ isOpen, onClose, onComplete }) => {
     location: '',
     interests: []
   });
+  const [citySuggestions, setCitySuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const { toast } = useToast();
 
   const handleGenderSelect = (gender) => {
@@ -32,6 +35,15 @@ export const PreferencesModal = ({ isOpen, onClose, onComplete }) => {
 
   const handleLocationChange = (location) => {
     setPreferences(prev => ({ ...prev, location }));
+    const suggestions = filterCities(location);
+    setCitySuggestions(suggestions);
+    setShowSuggestions(suggestions.length > 0 && location.trim().length >= 2);
+  };
+
+  const selectCity = (city) => {
+    setPreferences(prev => ({ ...prev, location: city }));
+    setShowSuggestions(false);
+    setCitySuggestions([]);
   };
 
   const toggleInterest = (interest) => {
@@ -139,9 +151,37 @@ export const PreferencesModal = ({ isOpen, onClose, onComplete }) => {
                   id="location"
                   value={preferences.location}
                   onChange={(e) => handleLocationChange(e.target.value)}
+                  onFocus={() => {
+                    if (preferences.location.trim().length >= 2) {
+                      setShowSuggestions(true);
+                    }
+                  }}
+                  onBlur={() => {
+                    // Delay para permitir o clique na sugestão
+                    setTimeout(() => setShowSuggestions(false), 200);
+                  }}
                   placeholder="Ex: São Paulo, SP"
                   className="pl-10"
+                  autoComplete="off"
                 />
+                
+                {/* Dropdown de sugestões */}
+                {showSuggestions && citySuggestions.length > 0 && (
+                  <div className="absolute top-full left-0 right-0 mt-1 bg-card border border-primary/30 rounded-md shadow-glow max-h-48 overflow-y-auto z-50">
+                    {citySuggestions.map((city, index) => (
+                      <div
+                        key={index}
+                        className="px-4 py-2 hover:bg-primary/10 cursor-pointer transition-colors border-b border-border/20 last:border-b-0"
+                        onClick={() => selectCity(city)}
+                      >
+                        <div className="flex items-center gap-2">
+                          <MapPin className="h-3 w-3 text-primary" />
+                          <span className="text-sm">{city}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           </div>

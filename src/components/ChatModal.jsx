@@ -4,17 +4,26 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { Send, Heart, ArrowLeft, Loader2 } from 'lucide-react';
+import { Send, Heart, ArrowLeft, Loader2, MoreVertical, UserX, Flag } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { UnmatchDialog, ReportAbuseModal } from './ChatOptionsModal';
 
-export const ChatModal = ({ isOpen, onClose, match }) => {
+export const ChatModal = ({ isOpen, onClose, match, onUnmatch }) => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(false);
+  const [unmatchDialogOpen, setUnmatchDialogOpen] = useState(false);
+  const [reportModalOpen, setReportModalOpen] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
   const messagesEndRef = useRef(null);
@@ -115,6 +124,18 @@ export const ChatModal = ({ isOpen, onClose, match }) => {
     }
   };
 
+  const handleUnmatch = () => {
+    if (onUnmatch) {
+      onUnmatch(match.id);
+    }
+    toast({
+      title: "Match desfeito",
+      description: `Você desfez o match com ${match.name}.`,
+    });
+    setUnmatchDialogOpen(false);
+    onClose();
+  };
+
   if (!match) return null;
 
   return (
@@ -148,9 +169,29 @@ export const ChatModal = ({ isOpen, onClose, match }) => {
               <p className="text-xs text-muted-foreground">Online agora</p>
             </div>
             
-            <Button variant="ghost" size="icon" className="text-red-500 hover:bg-red-50">
-              <Heart className="h-4 w-4" />
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="hover:bg-accent">
+                  <MoreVertical className="h-5 w-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48 bg-card border border-primary/30">
+                <DropdownMenuItem 
+                  onClick={() => setUnmatchDialogOpen(true)}
+                  className="cursor-pointer hover:bg-accent/50"
+                >
+                  <UserX className="h-4 w-4 mr-2" />
+                  Desfazer Match
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => setReportModalOpen(true)}
+                  className="cursor-pointer text-destructive hover:bg-destructive/10 hover:text-destructive"
+                >
+                  <Flag className="h-4 w-4 mr-2" />
+                  Reportar Abuso
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </DialogHeader>
 
@@ -212,6 +253,19 @@ export const ChatModal = ({ isOpen, onClose, match }) => {
           </div>
         </div>
       </DialogContent>
+
+      {/* Diálogos de opções */}
+      <UnmatchDialog
+        isOpen={unmatchDialogOpen}
+        onClose={() => setUnmatchDialogOpen(false)}
+        onConfirm={handleUnmatch}
+        matchName={match.name}
+      />
+      <ReportAbuseModal
+        isOpen={reportModalOpen}
+        onClose={() => setReportModalOpen(false)}
+        matchName={match.name}
+      />
     </Dialog>
   );
 };

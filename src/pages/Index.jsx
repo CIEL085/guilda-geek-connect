@@ -228,6 +228,11 @@ const Index = () => {
     );
   }
 
+  const handleUnmatch = (matchId) => {
+    setMatches(prev => prev.filter(m => m.id !== matchId));
+    setSelectedMatch(null);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-hero relative overflow-hidden">
       <AnimatedBackground />
@@ -374,6 +379,7 @@ const Index = () => {
           setChatModalOpen(false);
         }}
         match={selectedMatch}
+        onUnmatch={handleUnmatch}
       />
     </div>
   );
