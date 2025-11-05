@@ -12,6 +12,7 @@ import { AuthModal } from "@/components/AuthModal";
 import { PreferencesModal } from "@/components/PreferencesModal";
 import { ProfileModal } from "@/components/ProfileModal";
 import { ChatModal } from "@/components/ChatModal";
+import { MatchModal } from "@/components/MatchModal";
 import { AnimatedBackground } from "@/components/AnimatedBackground";
 import { AIChatSupport } from "@/components/AIChatSupport";
 import { useAuth } from "@/hooks/useAuth";
@@ -26,8 +27,10 @@ const Index = () => {
   const [preferencesModalOpen, setPreferencesModalOpen] = useState(false);
   const [profileModalOpen, setProfileModalOpen] = useState(false);
   const [chatModalOpen, setChatModalOpen] = useState(false);
+  const [matchModalOpen, setMatchModalOpen] = useState(false);
   const [selectedMatch, setSelectedMatch] = useState(null);
   const [profiles, setProfiles] = useState([]);
+  const [matches, setMatches] = useState([]);
   const { user, loading, signOut } = useAuth();
   const { toast } = useToast();
 
@@ -121,22 +124,26 @@ const Index = () => {
     const currentProfile = profiles[profileIndex];
     
     if (direction === "right") {
-      // Simula match e abre chat
+      // Adiciona aos matches e abre modal de match
+      setMatches(prev => [...prev, currentProfile]);
       setSelectedMatch(currentProfile);
-      setChatModalOpen(true);
-      toast({
-        title: "É um Match! 💙✨",
-        description: `Você e ${currentProfile.name} deram match! Comece a conversar agora.`
-      });
+      setMatchModalOpen(true);
     } else {
       toast({
         title: "Perfil descartado",
-        description: `Você não curtiu ${currentProfile.name}`
+        description: `Você passou ${currentProfile.name}`,
+        duration: 2000
       });
     }
     
     // Move to next profile (cycle through the sample profiles)
     setProfileIndex((prev) => (prev + 1) % profiles.length);
+  };
+
+  const handleStartChat = () => {
+    if (selectedMatch) {
+      setChatModalOpen(true);
+    }
   };
 
   const handleAuthComplete = (userData) => {
@@ -239,14 +246,25 @@ const Index = () => {
             variant="ghost" 
             size="icon"
             onClick={() => {
-              if (profiles.length > 0) {
-                setSelectedMatch(profiles[profileIndex]);
+              if (matches.length > 0) {
+                setSelectedMatch(matches[matches.length - 1]);
                 setChatModalOpen(true);
+              } else {
+                toast({
+                  title: "Nenhum match ainda",
+                  description: "Curta alguns perfis primeiro!",
+                  duration: 3000
+                });
               }
             }}
-            className="hover:bg-primary/20 hover:shadow-neon-blue transition-all"
+            className="hover:bg-primary/20 hover:shadow-neon-blue transition-all relative"
           >
             <MessageCircle className="h-6 w-6 text-primary" />
+            {matches.length > 0 && (
+              <span className="absolute -top-1 -right-1 w-5 h-5 bg-accent rounded-full flex items-center justify-center text-xs font-bold text-white animate-pulse">
+                {matches.length}
+              </span>
+            )}
           </Button>
           <Button 
             variant="ghost" 
@@ -314,11 +332,11 @@ const Index = () => {
             </p>
             <div className="flex justify-center gap-8">
               <div className="text-center p-4 rounded-xl bg-primary/10 border-2 border-primary/30 backdrop-blur-sm min-w-[100px]">
-                <p className="text-4xl font-orbitron font-bold text-primary neon-pulse">12</p>
+                <p className="text-4xl font-orbitron font-bold text-primary neon-pulse">{matches.length}</p>
                 <p className="text-sm text-muted-foreground font-semibold mt-1">Matches</p>
               </div>
               <div className="text-center p-4 rounded-xl bg-accent/10 border-2 border-accent/30 backdrop-blur-sm min-w-[100px]">
-                <p className="text-4xl font-orbitron font-bold text-accent neon-pulse">8</p>
+                <p className="text-4xl font-orbitron font-bold text-accent neon-pulse">{matches.length}</p>
                 <p className="text-sm text-muted-foreground font-semibold mt-1">Conversas</p>
               </div>
             </div>
@@ -344,11 +362,16 @@ const Index = () => {
         isOpen={profileModalOpen} 
         onClose={() => setProfileModalOpen(false)} 
       />
+      <MatchModal
+        isOpen={matchModalOpen}
+        onClose={() => setMatchModalOpen(false)}
+        match={selectedMatch}
+        onStartChat={handleStartChat}
+      />
       <ChatModal 
         isOpen={chatModalOpen} 
         onClose={() => {
           setChatModalOpen(false);
-          setSelectedMatch(null);
         }}
         match={selectedMatch}
       />
