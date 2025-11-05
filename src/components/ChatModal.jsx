@@ -7,7 +7,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { Send, Heart, ArrowLeft } from 'lucide-react';
+import { Send, Heart, ArrowLeft, Loader2 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
@@ -15,40 +15,20 @@ export const ChatModal = ({ isOpen, onClose, match }) => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(false);
-  const [conversation, setConversation] = useState(null);
   const { user } = useAuth();
   const { toast } = useToast();
   const messagesEndRef = useRef(null);
 
-  // Mock messages for testing
-  const mockMessages = [
-    {
-      id: '1',
-      content: 'Oi! Vi que você também curte One Piece! Qual seu arco favorito?',
-      sender_id: match?.id || 'other-user',
-      created_at: new Date(Date.now() - 300000).toISOString(),
-      conversation_id: 'mock-conversation'
-    },
-    {
-      id: '2', 
-      content: 'Opa! Adoro One Piece! Acho que o arco de Marineford é imbatível. E você?',
-      sender_id: user?.id || 'current-user',
-      created_at: new Date(Date.now() - 240000).toISOString(),
-      conversation_id: 'mock-conversation'
-    },
-    {
-      id: '3',
-      content: 'Marineford é épico mesmo! Eu amo o arco de Water 7/Enies Lobby também. A parte do Robin me fez chorar 😭',
-      sender_id: match?.id || 'other-user',
-      created_at: new Date(Date.now() - 180000).toISOString(),
-      conversation_id: 'mock-conversation'
-    }
-  ];
-
   useEffect(() => {
     if (isOpen && match) {
-      // Load mock messages for testing
-      setMessages(mockMessages);
+      // Inicia conversa com mensagem de boas-vindas do match
+      const welcomeMessage = {
+        id: 'welcome-1',
+        content: `Olá! Vi que você também curte ${match.interests?.[0] || 'cultura geek'}! 😊`,
+        sender_id: match.id,
+        created_at: new Date().toISOString(),
+      };
+      setMessages([welcomeMessage]);
       scrollToBottom();
     }
   }, [isOpen, match]);
@@ -68,46 +48,64 @@ export const ChatModal = ({ isOpen, onClose, match }) => {
     setNewMessage('');
     setLoading(true);
 
-    // Mock message sending - simulate real time
-    const mockNewMessage = {
+    // Adiciona mensagem do usuário
+    const userMessage = {
       id: Date.now().toString(),
       content: messageContent,
       sender_id: user?.id || 'current-user',
       created_at: new Date().toISOString(),
-      conversation_id: 'mock-conversation'
     };
 
-    setMessages(prev => [...prev, mockNewMessage]);
+    setMessages(prev => [...prev, userMessage]);
 
-    // Simulate response after 2 seconds
-    setTimeout(() => {
-      const responses = [
-        "Que legal! Concordo totalmente 😄",
-        "Nossa, também amo isso! Temos muito em comum",
-        "Haha, verdade! Que coincidência",
-        "Exato! Você tem bom gosto 😉",
-        "Interessante! Me conta mais sobre isso"
-      ];
+    try {
+      // Envia mensagens para o Gemini
+      const conversationHistory = [...messages, userMessage].map(msg => ({
+        role: msg.sender_id === user?.id ? 'user' : 'assistant',
+        content: msg.content
+      }));
 
-      const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-      
-      const mockResponse = {
+      const { data, error } = await supabase.functions.invoke('chat-match', {
+        body: { 
+          messages: conversationHistory,
+          matchProfile: {
+            name: match.name,
+            gender: match.gender,
+            interests: match.interests
+          }
+        }
+      });
+
+      if (error) throw error;
+
+      if (data?.error) {
+        throw new Error(data.error);
+      }
+
+      // Adiciona resposta da IA
+      const aiResponse = {
         id: (Date.now() + 1).toString(),
-        content: randomResponse,
+        content: data.message,
         sender_id: match.id,
         created_at: new Date().toISOString(),
-        conversation_id: 'mock-conversation'
       };
 
-      setMessages(prev => [...prev, mockResponse]);
-    }, 2000);
+      setMessages(prev => [...prev, aiResponse]);
 
-    setLoading(false);
-
-    toast({
-      title: "Mensagem enviada!",
-      description: "Sua mensagem foi entregue com sucesso."
-    });
+      toast({
+        title: "Mensagem enviada! 💬",
+        description: "Sua mensagem foi entregue com sucesso."
+      });
+    } catch (error) {
+      console.error('Error sending message:', error);
+      toast({
+        title: "Erro ao enviar mensagem",
+        description: error.message || "Tente novamente em alguns instantes.",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleKeyPress = (e) => {
@@ -205,7 +203,11 @@ export const ChatModal = ({ isOpen, onClose, match }) => {
               size="icon"
               className="bg-gradient-primary hover:shadow-glow"
             >
-              <Send className="h-4 w-4" />
+              {loading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Send className="h-4 w-4" />
+              )}
             </Button>
           </div>
         </div>

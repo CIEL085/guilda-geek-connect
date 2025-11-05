@@ -26,6 +26,7 @@ const Index = () => {
   const [preferencesModalOpen, setPreferencesModalOpen] = useState(false);
   const [profileModalOpen, setProfileModalOpen] = useState(false);
   const [chatModalOpen, setChatModalOpen] = useState(false);
+  const [selectedMatch, setSelectedMatch] = useState(null);
   const [profiles, setProfiles] = useState([]);
   const { user, loading, signOut } = useAuth();
   const { toast } = useToast();
@@ -120,9 +121,12 @@ const Index = () => {
     const currentProfile = profiles[profileIndex];
     
     if (direction === "right") {
+      // Simula match e abre chat
+      setSelectedMatch(currentProfile);
+      setChatModalOpen(true);
       toast({
-        title: "Match enviado! 💙",
-        description: `Você curtiu ${currentProfile.name}!`
+        title: "É um Match! 💙✨",
+        description: `Você e ${currentProfile.name} deram match! Comece a conversar agora.`
       });
     } else {
       toast({
@@ -234,7 +238,12 @@ const Index = () => {
           <Button 
             variant="ghost" 
             size="icon"
-            onClick={() => setChatModalOpen(true)}
+            onClick={() => {
+              if (profiles.length > 0) {
+                setSelectedMatch(profiles[profileIndex]);
+                setChatModalOpen(true);
+              }
+            }}
             className="hover:bg-primary/20 hover:shadow-neon-blue transition-all"
           >
             <MessageCircle className="h-6 w-6 text-primary" />
@@ -337,7 +346,11 @@ const Index = () => {
       />
       <ChatModal 
         isOpen={chatModalOpen} 
-        onClose={() => setChatModalOpen(false)} 
+        onClose={() => {
+          setChatModalOpen(false);
+          setSelectedMatch(null);
+        }}
+        match={selectedMatch}
       />
     </div>
   );
