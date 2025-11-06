@@ -15,6 +15,7 @@ import { ChatModal } from "@/components/ChatModal";
 import { MatchModal } from "@/components/MatchModal";
 import { AnimatedBackground } from "@/components/AnimatedBackground";
 import { AIChatSupport } from "@/components/AIChatSupport";
+import { BottomNav } from "@/components/BottomNav";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
