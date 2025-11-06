@@ -352,6 +352,9 @@ const Index = () => {
       {/* AI Chat Support */}
       <AIChatSupport />
 
+      {/* Bottom Navigation */}
+      <BottomNav />
+
       {/* Modals */}
       <AuthModal 
         isOpen={authModalOpen} 
