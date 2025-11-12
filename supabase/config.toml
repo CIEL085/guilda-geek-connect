@@ -1,1 +1,13 @@
 project_id = "rbwyiqonmmfjgcqlbzbx"
+
+[functions.chat-match]
+verify_jwt = true
+
+[functions.verify-email]
+verify_jwt = false
+
+[functions.vendor-chat]
+verify_jwt = true
+
+[functions.demo-payment]
+verify_jwt = true

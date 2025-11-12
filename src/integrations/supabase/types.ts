@@ -35,6 +35,54 @@ export type Database = {
         }
         Relationships: []
       }
+      demo_orders: {
+        Row: {
+          buyer_id: string
+          conversation_id: string | null
+          created_at: string | null
+          id: string
+          product_id: string
+          receipt_id: string
+          status: string | null
+          total_price: number
+        }
+        Insert: {
+          buyer_id: string
+          conversation_id?: string | null
+          created_at?: string | null
+          id?: string
+          product_id: string
+          receipt_id: string
+          status?: string | null
+          total_price: number
+        }
+        Update: {
+          buyer_id?: string
+          conversation_id?: string | null
+          created_at?: string | null
+          id?: string
+          product_id?: string
+          receipt_id?: string
+          status?: string | null
+          total_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "demo_orders_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "seller_conversations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "demo_orders_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       matches: {
         Row: {
           created_at: string
@@ -91,6 +139,48 @@ export type Database = {
           },
         ]
       }
+      products: {
+        Row: {
+          category: string | null
+          created_at: string | null
+          description: string | null
+          fandom: string | null
+          id: string
+          image_url: string | null
+          is_official: boolean | null
+          name: string
+          price: number
+          seller_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string | null
+          description?: string | null
+          fandom?: string | null
+          id?: string
+          image_url?: string | null
+          is_official?: boolean | null
+          name: string
+          price: number
+          seller_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string | null
+          created_at?: string | null
+          description?: string | null
+          fandom?: string | null
+          id?: string
+          image_url?: string | null
+          is_official?: boolean | null
+          name?: string
+          price?: number
+          seller_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       profile_photos: {
         Row: {
           created_at: string
@@ -121,32 +211,138 @@ export type Database = {
           bio: string | null
           created_at: string
           display_name: string
+          email_verified: boolean | null
           gender: string | null
           id: string
           interests: string[] | null
           updated_at: string
           user_id: string
+          vendor_status: string | null
+          verification_token: string | null
         }
         Insert: {
           age?: number | null
           bio?: string | null
           created_at?: string
           display_name: string
+          email_verified?: boolean | null
           gender?: string | null
           id?: string
           interests?: string[] | null
           updated_at?: string
           user_id: string
+          vendor_status?: string | null
+          verification_token?: string | null
         }
         Update: {
           age?: number | null
           bio?: string | null
           created_at?: string
           display_name?: string
+          email_verified?: boolean | null
           gender?: string | null
           id?: string
           interests?: string[] | null
           updated_at?: string
+          user_id?: string
+          vendor_status?: string | null
+          verification_token?: string | null
+        }
+        Relationships: []
+      }
+      seller_conversations: {
+        Row: {
+          buyer_id: string
+          created_at: string | null
+          id: string
+          negotiated_price: number | null
+          product_id: string
+          seller_id: string
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          buyer_id: string
+          created_at?: string | null
+          id?: string
+          negotiated_price?: number | null
+          product_id: string
+          seller_id: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          buyer_id?: string
+          created_at?: string | null
+          id?: string
+          negotiated_price?: number | null
+          product_id?: string
+          seller_id?: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "seller_conversations_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      seller_messages: {
+        Row: {
+          content: string
+          conversation_id: string
+          created_at: string | null
+          id: string
+          message_type: string | null
+          sender_id: string
+        }
+        Insert: {
+          content: string
+          conversation_id: string
+          created_at?: string | null
+          id?: string
+          message_type?: string | null
+          sender_id: string
+        }
+        Update: {
+          content?: string
+          conversation_id?: string
+          created_at?: string | null
+          id?: string
+          message_type?: string | null
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "seller_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "seller_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string | null
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
         }
         Relationships: []
@@ -156,10 +352,16 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "otaku" | "vendedor"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -286,6 +488,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["otaku", "vendedor"],
+    },
   },
 } as const

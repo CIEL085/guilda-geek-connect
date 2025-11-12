@@ -2,8 +2,9 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Heart, Gamepad2, BookOpen, Users, Sparkles } from "lucide-react";
 import { AnimatedBackground } from "@/components/AnimatedBackground";
+import { MarketplaceCard } from "@/components/MarketplaceCard";
 
-export const HeroSection = ({ onEnter }) => {
+export const HeroSection = ({ onEnter, onProductClick }) => {
   return (
     <div className="min-h-screen bg-gradient-hero flex items-center justify-center p-4 relative overflow-hidden">
       <AnimatedBackground />
@@ -33,15 +34,20 @@ export const HeroSection = ({ onEnter }) => {
             </p>
           </div>
 
-          <div className="flex justify-center mb-16">
+          <div className="flex justify-center mb-8">
             <Button
               size="lg"
               className="bg-gradient-secondary hover:shadow-neon-pink text-lg px-10 py-7 rounded-full font-orbitron font-bold text-white neon-pulse hover:scale-110 transition-all duration-300"
               onClick={onEnter}
             >
               <Heart className="mr-2 h-6 w-6" />
-              COMEÇAR AGORA
+              COMEÇAR AVENTURA
             </Button>
+          </div>
+
+          {/* Marketplace Card */}
+          <div className="mb-16">
+            <MarketplaceCard onProductClick={onProductClick} />
           </div>
         </div>
 
