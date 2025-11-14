@@ -6,6 +6,9 @@ verify_jwt = true
 [functions.verify-email]
 verify_jwt = false
 
+[functions.send-verification-email]
+verify_jwt = false
+
 [functions.vendor-chat]
 verify_jwt = true
 
