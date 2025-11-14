@@ -102,16 +102,12 @@ export const AuthModal = ({ isOpen, onClose, onComplete, onNeedVerification }) =
 
       if (authError) throw authError;
 
-      // Generate verification token
-      const verificationToken = `TOKEN-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-
-      // Update profile with verification token and vendor status
+      // Update profile with vendor status
       const vendorStatus = selectedRole === 'vendedor' ? 'pending' : 'active';
       
       await supabase
         .from('profiles')
         .update({ 
-          verification_token: verificationToken,
           vendor_status: vendorStatus
         })
         .eq('user_id', authData.user.id);
@@ -124,13 +120,28 @@ export const AuthModal = ({ isOpen, onClose, onComplete, onNeedVerification }) =
           role: selectedRole
         });
 
-      toast({
-        title: "🎉 Conta criada!",
-        description: "Verifique seu email para ativar sua conta.",
+      // Send verification email via edge function
+      console.log('Sending verification email...');
+      const { error: emailError } = await supabase.functions.invoke('send-verification-email', {
+        body: {
+          email: email,
+          userId: authData.user.id,
+          name: fullName
+        }
       });
 
-      // Show verification modal
-      onNeedVerification?.(email, verificationToken);
+      if (emailError) {
+        console.error('Error sending verification email:', emailError);
+      }
+
+      toast({
+        title: "🎉 Conta criada!",
+        description: "Verifique seu email para ativar sua conta. O email pode demorar alguns minutos para chegar.",
+        duration: 8000
+      });
+
+      // Close modal and show verification message
+      onClose();
       
     } catch (error) {
       console.error('Signup error:', error);

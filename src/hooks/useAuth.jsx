@@ -4,47 +4,100 @@ import { supabase } from '@/integrations/supabase/client';
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  // Mock authentication for testing - simulate logged in user
-  const mockUser = {
-    id: 'test-user-123',
-    email: 'teste@exemplo.com',
-    created_at: new Date().toISOString(),
-    app_metadata: {},
-    user_metadata: { full_name: 'Usuário Teste' },
-    aud: 'authenticated',
-    confirmed_at: new Date().toISOString(),
-    email_confirmed_at: new Date().toISOString(),
-    phone: '',
-    last_sign_in_at: new Date().toISOString(),
-    role: 'authenticated',
-    updated_at: new Date().toISOString()
-  };
+  const [user, setUser] = useState(null);
+  const [session, setSession] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const mockSession = {
-    access_token: 'mock-token',
-    refresh_token: 'mock-refresh',
-    expires_in: 3600,
-    token_type: 'bearer',
-    user: mockUser
-  };
+  useEffect(() => {
+    // Set up auth state listener FIRST
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        console.log('Auth state changed:', event, session?.user?.email);
+        setSession(session);
+        setUser(session?.user ?? null);
+        setLoading(false);
+      }
+    );
 
-  const [user] = useState(mockUser);
-  const [session] = useState(mockSession);
-  const [loading] = useState(false);
+    // THEN check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      setLoading(false);
+    });
 
-  const signUp = async (email, password, fullName) => {
-    // Mock signup - always succeeds for testing
-    return { error: null };
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const signUp = async (email, password, fullName, role) => {
+    try {
+      const redirectUrl = `${window.location.origin}/`;
+      
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: redirectUrl,
+          data: {
+            full_name: fullName,
+            role: role
+          }
+        }
+      });
+
+      if (error) throw error;
+
+      // Send custom verification email via edge function
+      if (data.user) {
+        console.log('Sending verification email via edge function...');
+        try {
+          const { error: emailError } = await supabase.functions.invoke('send-verification-email', {
+            body: {
+              email: email,
+              userId: data.user.id,
+              name: fullName
+            }
+          });
+
+          if (emailError) {
+            console.error('Error sending verification email:', emailError);
+          } else {
+            console.log('Verification email sent successfully');
+          }
+        } catch (emailErr) {
+          console.error('Failed to invoke email function:', emailErr);
+        }
+      }
+
+      return { data, error: null };
+    } catch (error) {
+      console.error('Signup error:', error);
+      return { data: null, error };
+    }
   };
 
   const signIn = async (email, password) => {
-    // Mock signin - always succeeds for testing
-    return { error: null };
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) throw error;
+      return { data, error: null };
+    } catch (error) {
+      console.error('Signin error:', error);
+      return { data: null, error };
+    }
   };
 
   const signOut = async () => {
-    // Mock signout - just reload page
-    window.location.reload();
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+    } catch (error) {
+      console.error('Signout error:', error);
+    }
   };
 
   const value = {
