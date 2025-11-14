@@ -19,6 +19,7 @@ import { BottomNav } from "@/components/BottomNav";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { MOCK_PROFILES, filterProfilesByPreferences } from "@/data/mockProfiles";
 
 const Index = () => {
   const [currentView, setCurrentView] = useState("hero");
@@ -35,56 +36,31 @@ const Index = () => {
   const { user, loading, signOut } = useAuth();
   const { toast } = useToast();
 
-  // Sample profiles for demo
-  const sampleProfiles = [
-    {
-      id: 1,
-      name: "Sakura",
-      age: 24,
-      image: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400&h=500&fit=crop&crop=face",
-      interests: ["#onepiece", "#naruto", "#gaming", "#cosplay"]
-    },
-    {
-      id: 2,
-      name: "Akira",
-      age: 26,
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=500&fit=crop&crop=face",
-      interests: ["#dragonball", "#pokemon", "#manga", "#anime"]
-    },
-    {
-      id: 3,
-      name: "Yuki",
-      age: 22,
-      image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=500&fit=crop&crop=face",
-      interests: ["#sailormoon", "#studioghibli", "#jrpg", "#kawaii"]
-    },
-    {
-      id: 4,
-      name: "Ryu",
-      age: 28,
-      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=500&fit=crop&crop=face",
-      interests: ["#streetfighter", "#tekken", "#fightinggames", "#arcade"]
-    },
-    {
-      id: 5,
-      name: "Luna",
-      age: 25,
-      image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=500&fit=crop&crop=face",
-      interests: ["#pokemon", "#zelda", "#nintendo", "#cute"]
-    },
-    {
-      id: 6,
-      name: "Kenji",
-      age: 27,
-      image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=500&fit=crop&crop=face",
-      interests: ["#finalfantasy", "#jrpg", "#squareenix", "#music"]
-    }
-  ];
-
+  // Load and filter profiles when preferences change
   useEffect(() => {
-    // Use sample profiles for testing since we're not using real auth
-    setProfiles(sampleProfiles);
-  }, []);
+    if (currentView === "app" && userPreferences) {
+      // Create a mock current user based on preferences
+      const currentUser = {
+        age: userPreferences.age || 25,
+        latitude: userPreferences.latitude,
+        longitude: userPreferences.longitude,
+        city: userPreferences.location
+      };
+
+      // Filter profiles based on mutual preferences
+      const filteredProfiles = filterProfilesByPreferences(
+        MOCK_PROFILES,
+        currentUser,
+        userPreferences
+      );
+
+      setProfiles(filteredProfiles);
+      setProfileIndex(0);
+    } else {
+      // Show all mock profiles when not in app view
+      setProfiles(MOCK_PROFILES);
+    }
+  }, [currentView, userPreferences]);
 
   const loadProfiles = async () => {
     if (!user) return;
@@ -96,6 +72,13 @@ const Index = () => {
       .limit(20);
 
     if (data) {
+      // Get current user's profile for filtering
+      const { data: currentUserProfile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('user_id', user.id)
+        .single();
+
       // Get photos separately
       const profilesWithPhotos = await Promise.all(
         data.map(async (profile) => {
@@ -109,13 +92,45 @@ const Index = () => {
             id: profile.user_id,
             name: profile.display_name,
             age: profile.age,
+            gender: profile.gender,
+            city: profile.city,
+            latitude: profile.latitude,
+            longitude: profile.longitude,
+            ageMin: profile.age_min || 18,
+            ageMax: profile.age_max || 75,
+            maxDistance: profile.max_distance || 50,
             image: photos?.[0]?.photo_url || 
                    "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=500&fit=crop",
             interests: profile.interests || []
           };
         })
       );
-      setProfiles(profilesWithPhotos);
+
+      // Filter profiles based on mutual preferences
+      if (currentUserProfile) {
+        const currentUser = {
+          age: currentUserProfile.age,
+          latitude: currentUserProfile.latitude,
+          longitude: currentUserProfile.longitude,
+        };
+
+        const preferences = {
+          genderPreference: userPreferences.genderPreference,
+          ageMin: currentUserProfile.age_min || 18,
+          ageMax: currentUserProfile.age_max || 75,
+          maxDistance: currentUserProfile.max_distance || 50
+        };
+
+        const filtered = filterProfilesByPreferences(
+          profilesWithPhotos,
+          currentUser,
+          preferences
+        );
+
+        setProfiles(filtered);
+      } else {
+        setProfiles(profilesWithPhotos);
+      }
     }
   };
 
@@ -173,8 +188,44 @@ const Index = () => {
   };
 
   // Handle preferences modal completion - go to main app
-  const handlePreferencesComplete = (preferences) => {
+  const handlePreferencesComplete = async (preferences) => {
     setUserPreferences(prev => ({ ...prev, ...preferences }));
+    
+    // If user is authenticated, save preferences to database
+    if (user) {
+      // Parse city to get coordinates (mock for now)
+      const cityCoords = {
+        "São Paulo, SP": { lat: -23.5505, lon: -46.6333 },
+        "Rio de Janeiro, RJ": { lat: -22.9068, lon: -43.1729 },
+        "Belo Horizonte, MG": { lat: -19.9167, lon: -43.9345 },
+        "Brasília, DF": { lat: -15.8267, lon: -47.9218 },
+        "Curitiba, PR": { lat: -25.4284, lon: -49.2733 },
+        "Porto Alegre, RS": { lat: -30.0346, lon: -51.2177 },
+        "Salvador, BA": { lat: -12.9714, lon: -38.5014 },
+        "Recife, PE": { lat: -8.0476, lon: -34.8770 },
+        "Fortaleza, CE": { lat: -3.7172, lon: -38.5433 },
+        "Manaus, AM": { lat: -3.1190, lon: -60.0217 }
+      };
+
+      const coords = cityCoords[preferences.location] || { lat: -23.5505, lon: -46.6333 };
+
+      await supabase
+        .from('profiles')
+        .update({
+          city: preferences.location,
+          latitude: coords.lat,
+          longitude: coords.lon,
+          age_min: preferences.ageMin,
+          age_max: preferences.ageMax,
+          max_distance: preferences.maxDistance,
+          interests: preferences.interests
+        })
+        .eq('user_id', user.id);
+
+      // Reload profiles with new preferences
+      loadProfiles();
+    }
+    
     setPreferencesModalOpen(false);
     setCurrentView("app");
   };
