@@ -208,13 +208,19 @@ export type Database = {
       profiles: {
         Row: {
           age: number | null
+          age_max: number | null
+          age_min: number | null
           bio: string | null
+          city: string | null
           created_at: string
           display_name: string
           email_verified: boolean | null
           gender: string | null
           id: string
           interests: string[] | null
+          latitude: number | null
+          longitude: number | null
+          max_distance: number | null
           updated_at: string
           user_id: string
           vendor_status: string | null
@@ -222,13 +228,19 @@ export type Database = {
         }
         Insert: {
           age?: number | null
+          age_max?: number | null
+          age_min?: number | null
           bio?: string | null
+          city?: string | null
           created_at?: string
           display_name: string
           email_verified?: boolean | null
           gender?: string | null
           id?: string
           interests?: string[] | null
+          latitude?: number | null
+          longitude?: number | null
+          max_distance?: number | null
           updated_at?: string
           user_id: string
           vendor_status?: string | null
@@ -236,13 +248,19 @@ export type Database = {
         }
         Update: {
           age?: number | null
+          age_max?: number | null
+          age_min?: number | null
           bio?: string | null
+          city?: string | null
           created_at?: string
           display_name?: string
           email_verified?: boolean | null
           gender?: string | null
           id?: string
           interests?: string[] | null
+          latitude?: number | null
+          longitude?: number | null
+          max_distance?: number | null
           updated_at?: string
           user_id?: string
           vendor_status?: string | null

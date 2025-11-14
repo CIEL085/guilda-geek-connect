@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Slider } from '@/components/ui/slider';
 import { MapPin, Heart, User, Users, ChevronRight, ChevronLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { filterCities } from '@/data/brazilianCities';
@@ -23,7 +24,10 @@ export const PreferencesModal = ({ isOpen, onClose, onComplete }) => {
   const [preferences, setPreferences] = useState({
     genderPreference: '',
     location: '',
-    interests: []
+    interests: [],
+    ageMin: 18,
+    ageMax: 75,
+    maxDistance: 50
   });
   const [citySuggestions, setCitySuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -74,7 +78,7 @@ export const PreferencesModal = ({ isOpen, onClose, onComplete }) => {
       return;
     }
 
-    if (step < 3) {
+    if (step < 4) {
       setStep(step + 1);
     } else {
       handleComplete();
@@ -188,6 +192,65 @@ export const PreferencesModal = ({ isOpen, onClose, onComplete }) => {
         );
 
       case 3:
+        return (
+          <div className="space-y-6">
+            <div className="text-center">
+              <h3 className="text-lg font-semibold mb-2">Preferências de Idade</h3>
+              <p className="text-muted-foreground text-sm">Qual faixa etária você prefere?</p>
+            </div>
+            
+            <div className="space-y-6 px-2">
+              <div>
+                <Label className="text-sm font-medium mb-4 block">
+                  Idade: {preferences.ageMin} - {preferences.ageMax} anos
+                </Label>
+                <div className="space-y-4">
+                  <div>
+                    <Label className="text-xs text-muted-foreground mb-2 block">Idade Mínima: {preferences.ageMin}</Label>
+                    <Slider
+                      value={[preferences.ageMin]}
+                      onValueChange={(value) => setPreferences(prev => ({ ...prev, ageMin: value[0] }))}
+                      min={18}
+                      max={75}
+                      step={1}
+                      className="w-full"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-xs text-muted-foreground mb-2 block">Idade Máxima: {preferences.ageMax}</Label>
+                    <Slider
+                      value={[preferences.ageMax]}
+                      onValueChange={(value) => setPreferences(prev => ({ ...prev, ageMax: value[0] }))}
+                      min={18}
+                      max={75}
+                      step={1}
+                      className="w-full"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <Label className="text-sm font-medium mb-4 block">
+                  Distância máxima: {preferences.maxDistance} km
+                </Label>
+                <Slider
+                  value={[preferences.maxDistance]}
+                  onValueChange={(value) => setPreferences(prev => ({ ...prev, maxDistance: value[0] }))}
+                  min={1}
+                  max={500}
+                  step={5}
+                  className="w-full"
+                />
+                <p className="text-xs text-muted-foreground mt-2">
+                  Mostrar perfis até {preferences.maxDistance} km de distância
+                </p>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 4:
         return (
           <div className="space-y-6">
             <div className="text-center">
