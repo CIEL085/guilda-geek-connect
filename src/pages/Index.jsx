@@ -36,101 +36,68 @@ const Index = () => {
   const { user, loading, signOut } = useAuth();
   const { toast } = useToast();
 
-  // Load and filter profiles when preferences change
+  // Load profiles immediately when user is authenticated
   useEffect(() => {
-    if (currentView === "app" && userPreferences) {
-      // Create a mock current user based on preferences
-      const currentUser = {
-        age: userPreferences.age || 25,
-        latitude: userPreferences.latitude,
-        longitude: userPreferences.longitude,
-        city: userPreferences.location
-      };
-
-      // Filter profiles based on mutual preferences
-      const filteredProfiles = filterProfilesByPreferences(
-        MOCK_PROFILES,
-        currentUser,
-        userPreferences
-      );
-
-      setProfiles(filteredProfiles);
-      setProfileIndex(0);
-    } else {
-      // Show all mock profiles when not in app view
+    if (user && currentView === "app") {
+      loadProfiles();
+    } else if (currentView === "app") {
+      // Show mock profiles for unauthenticated users
       setProfiles(MOCK_PROFILES);
+      setProfileIndex(0);
     }
-  }, [currentView, userPreferences]);
+  }, [user, currentView]);
 
   const loadProfiles = async () => {
     if (!user) return;
 
-    const { data } = await supabase
-      .from('profiles')
-      .select('*')
-      .neq('user_id', user.id)
-      .limit(20);
-
-    if (data) {
-      // Get current user's profile for filtering
-      const { data: currentUserProfile } = await supabase
+    try {
+      const { data } = await supabase
         .from('profiles')
         .select('*')
-        .eq('user_id', user.id)
-        .single();
+        .neq('user_id', user.id)
+        .limit(20);
 
-      // Get photos separately
-      const profilesWithPhotos = await Promise.all(
-        data.map(async (profile) => {
-          const { data: photos } = await supabase
-            .from('profile_photos')
-            .select('photo_url, is_primary')
-            .eq('user_id', profile.user_id)
-            .order('is_primary', { ascending: false });
+      if (data && data.length > 0) {
+        // Get photos for all profiles
+        const profilesWithPhotos = await Promise.all(
+          data.map(async (profile) => {
+            const { data: photos } = await supabase
+              .from('profile_photos')
+              .select('photo_url, is_primary')
+              .eq('user_id', profile.user_id)
+              .order('is_primary', { ascending: false });
 
-          return {
-            id: profile.user_id,
-            name: profile.display_name,
-            age: profile.age,
-            gender: profile.gender,
-            city: profile.city,
-            latitude: profile.latitude,
-            longitude: profile.longitude,
-            ageMin: profile.age_min || 18,
-            ageMax: profile.age_max || 75,
-            maxDistance: profile.max_distance || 50,
-            image: photos?.[0]?.photo_url || 
-                   "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=500&fit=crop",
-            interests: profile.interests || []
-          };
-        })
-      );
-
-      // Filter profiles based on mutual preferences
-      if (currentUserProfile) {
-        const currentUser = {
-          age: currentUserProfile.age,
-          latitude: currentUserProfile.latitude,
-          longitude: currentUserProfile.longitude,
-        };
-
-        const preferences = {
-          genderPreference: userPreferences.genderPreference,
-          ageMin: currentUserProfile.age_min || 18,
-          ageMax: currentUserProfile.age_max || 75,
-          maxDistance: currentUserProfile.max_distance || 50
-        };
-
-        const filtered = filterProfilesByPreferences(
-          profilesWithPhotos,
-          currentUser,
-          preferences
+            return {
+              id: profile.user_id,
+              name: profile.display_name,
+              age: profile.age || 25,
+              gender: profile.gender || "outros",
+              city: profile.city || "Brasil",
+              latitude: profile.latitude,
+              longitude: profile.longitude,
+              ageMin: profile.age_min || 18,
+              ageMax: profile.age_max || 75,
+              maxDistance: profile.max_distance || 50,
+              image: photos?.[0]?.photo_url || 
+                     "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=500&fit=crop",
+              interests: profile.interests || []
+            };
+          })
         );
 
-        setProfiles(filtered);
+        // Use real profiles if available, otherwise fallback to mock profiles
+        setProfiles(profilesWithPhotos.length > 0 ? profilesWithPhotos : MOCK_PROFILES);
+        setProfileIndex(0);
       } else {
-        setProfiles(profilesWithPhotos);
+        // No real profiles found, use mock profiles
+        setProfiles(MOCK_PROFILES);
+        setProfileIndex(0);
       }
+    } catch (error) {
+      console.error('Error loading profiles:', error);
+      // Fallback to mock profiles on error
+      setProfiles(MOCK_PROFILES);
+      setProfileIndex(0);
     }
   };
 
@@ -221,9 +188,6 @@ const Index = () => {
           interests: preferences.interests
         })
         .eq('user_id', user.id);
-
-      // Reload profiles with new preferences
-      loadProfiles();
     }
     
     setPreferencesModalOpen(false);
