@@ -36,42 +36,6 @@ const Index = () => {
   const { user, loading, signOut } = useAuth();
   const { toast } = useToast();
 
-  // Check for email verification token in URL
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const verifyToken = urlParams.get('verify');
-    
-    if (verifyToken) {
-      const verifyEmail = async () => {
-        try {
-          const { data, error } = await supabase.functions.invoke('verify-email', {
-            body: { token: verifyToken }
-          });
-
-          if (error) throw error;
-
-          toast({
-            title: data.message || "✨ Email verificado com sucesso!",
-            description: "Você já pode fazer login na sua conta.",
-            duration: 5000
-          });
-
-          // Remove token from URL
-          window.history.replaceState({}, document.title, window.location.pathname);
-        } catch (error) {
-          console.error('Email verification error:', error);
-          toast({
-            title: "Erro na verificação",
-            description: error.message || "Token inválido ou expirado.",
-            variant: "destructive"
-          });
-        }
-      };
-
-      verifyEmail();
-    }
-  }, [toast]);
-
   // Load and filter profiles when preferences change
   useEffect(() => {
     if (currentView === "app" && userPreferences) {
