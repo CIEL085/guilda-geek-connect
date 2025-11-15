@@ -63,7 +63,7 @@ const Index = () => {
       // Get current user profile first to know their preferences
       const { data: currentUserProfile } = await supabase
         .from('profiles')
-        .select('age, gender, latitude, longitude, age_min, age_max, max_distance')
+        .select('age, gender, latitude, longitude, age_min, age_max, max_distance, gender_preference')
         .eq('user_id', user.id)
         .maybeSingle();
 
@@ -101,9 +101,12 @@ const Index = () => {
           })
         );
 
+        // Use gender preference from database if available, otherwise from state
+        const genderPreference = currentUserProfile?.gender_preference || userPreferences.genderPreference;
+
         // Filter profiles by gender preference if set
         let filteredProfiles = profilesWithPhotos;
-        if (userPreferences.genderPreference && currentUserProfile) {
+        if (genderPreference && currentUserProfile) {
           const currentUser = {
             age: currentUserProfile.age || 25,
             latitude: currentUserProfile.latitude,
@@ -113,7 +116,7 @@ const Index = () => {
           filteredProfiles = filterProfilesByPreferences(
             profilesWithPhotos,
             currentUser,
-            userPreferences
+            { ...userPreferences, genderPreference }
           );
         }
 
@@ -122,16 +125,17 @@ const Index = () => {
           setProfiles(filteredProfiles);
         } else {
           // Apply same filter to mock profiles
-          const filteredMockProfiles = userPreferences.genderPreference
-            ? filterProfilesByPreferences(MOCK_PROFILES, { age: 25 }, userPreferences)
+          const filteredMockProfiles = genderPreference
+            ? filterProfilesByPreferences(MOCK_PROFILES, { age: 25 }, { ...userPreferences, genderPreference })
             : MOCK_PROFILES;
           setProfiles(filteredMockProfiles);
         }
         setProfileIndex(0);
       } else {
         // No real profiles found, use filtered mock profiles
-        const filteredMockProfiles = userPreferences.genderPreference
-          ? filterProfilesByPreferences(MOCK_PROFILES, { age: 25 }, userPreferences)
+        const genderPreference = currentUserProfile?.gender_preference || userPreferences.genderPreference;
+        const filteredMockProfiles = genderPreference
+          ? filterProfilesByPreferences(MOCK_PROFILES, { age: 25 }, { ...userPreferences, genderPreference })
           : MOCK_PROFILES;
         setProfiles(filteredMockProfiles);
         setProfileIndex(0);
@@ -231,7 +235,8 @@ const Index = () => {
           age_min: preferences.ageMin,
           age_max: preferences.ageMax,
           max_distance: preferences.maxDistance,
-          interests: preferences.interests
+          interests: preferences.interests,
+          gender_preference: preferences.genderPreference
         })
         .eq('user_id', user.id);
     }

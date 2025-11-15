@@ -216,6 +216,7 @@ export type Database = {
           display_name: string
           email_verified: boolean | null
           gender: string | null
+          gender_preference: string | null
           id: string
           interests: string[] | null
           latitude: number | null
@@ -236,6 +237,7 @@ export type Database = {
           display_name: string
           email_verified?: boolean | null
           gender?: string | null
+          gender_preference?: string | null
           id?: string
           interests?: string[] | null
           latitude?: number | null
@@ -256,6 +258,7 @@ export type Database = {
           display_name?: string
           email_verified?: boolean | null
           gender?: string | null
+          gender_preference?: string | null
           id?: string
           interests?: string[] | null
           latitude?: number | null
