@@ -42,13 +42,7 @@ export const AuthModal = ({ isOpen, onClose, onComplete, onNeedVerification }) =
       if (error) throw error;
 
       // Check email verification
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('email_verified')
-        .eq('user_id', data.user.id)
-        .single();
-
-      if (!profile?.email_verified) {
+      if (!data.user.email_confirmed_at) {
         toast({
           variant: "destructive",
           title: "Email não verificado",
@@ -120,27 +114,13 @@ export const AuthModal = ({ isOpen, onClose, onComplete, onNeedVerification }) =
           role: selectedRole
         });
 
-      // Send verification email via edge function
-      console.log('Sending verification email...');
-      const { error: emailError } = await supabase.functions.invoke('send-verification-email', {
-        body: {
-          email: email,
-          userId: authData.user.id,
-          name: fullName
-        }
-      });
-
-      if (emailError) {
-        console.error('Error sending verification email:', emailError);
-      }
-
       toast({
         title: "🎉 Conta criada!",
-        description: "Verifique seu email para ativar sua conta. O email pode demorar alguns minutos para chegar.",
+        description: "Verifique seu email para ativar sua conta. O Supabase enviará um email de confirmação.",
         duration: 8000
       });
 
-      // Close modal and show verification message
+      // Close modal
       onClose();
       
     } catch (error) {

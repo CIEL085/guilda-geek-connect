@@ -46,29 +46,6 @@ export const AuthProvider = ({ children }) => {
       });
 
       if (error) throw error;
-
-      // Send custom verification email via edge function
-      if (data.user) {
-        console.log('Sending verification email via edge function...');
-        try {
-          const { error: emailError } = await supabase.functions.invoke('send-verification-email', {
-            body: {
-              email: email,
-              userId: data.user.id,
-              name: fullName
-            }
-          });
-
-          if (emailError) {
-            console.error('Error sending verification email:', emailError);
-          } else {
-            console.log('Verification email sent successfully');
-          }
-        } catch (emailErr) {
-          console.error('Failed to invoke email function:', emailErr);
-        }
-      }
-
       return { data, error: null };
     } catch (error) {
       console.error('Signup error:', error);
