@@ -40,17 +40,33 @@ const Index = () => {
   useEffect(() => {
     if (user && currentView === "app") {
       loadProfiles();
+    } else if (currentView === "app" && userPreferences.genderPreference) {
+      // Filter mock profiles by gender preference
+      const filteredProfiles = filterProfilesByPreferences(
+        MOCK_PROFILES,
+        { age: 25 }, // default age
+        userPreferences
+      );
+      setProfiles(filteredProfiles.length > 0 ? filteredProfiles : MOCK_PROFILES);
+      setProfileIndex(0);
     } else if (currentView === "app") {
-      // Show mock profiles for unauthenticated users
+      // Show all mock profiles if no preferences set
       setProfiles(MOCK_PROFILES);
       setProfileIndex(0);
     }
-  }, [user, currentView]);
+  }, [user, currentView, userPreferences]);
 
   const loadProfiles = async () => {
     if (!user) return;
 
     try {
+      // Get current user profile first to know their preferences
+      const { data: currentUserProfile } = await supabase
+        .from('profiles')
+        .select('age, gender, latitude, longitude, age_min, age_max, max_distance')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
       const { data } = await supabase
         .from('profiles')
         .select('*')
@@ -85,18 +101,48 @@ const Index = () => {
           })
         );
 
-        // Use real profiles if available, otherwise fallback to mock profiles
-        setProfiles(profilesWithPhotos.length > 0 ? profilesWithPhotos : MOCK_PROFILES);
+        // Filter profiles by gender preference if set
+        let filteredProfiles = profilesWithPhotos;
+        if (userPreferences.genderPreference && currentUserProfile) {
+          const currentUser = {
+            age: currentUserProfile.age || 25,
+            latitude: currentUserProfile.latitude,
+            longitude: currentUserProfile.longitude
+          };
+          
+          filteredProfiles = filterProfilesByPreferences(
+            profilesWithPhotos,
+            currentUser,
+            userPreferences
+          );
+        }
+
+        // Use filtered profiles if available, otherwise use mock profiles
+        if (filteredProfiles.length > 0) {
+          setProfiles(filteredProfiles);
+        } else {
+          // Apply same filter to mock profiles
+          const filteredMockProfiles = userPreferences.genderPreference
+            ? filterProfilesByPreferences(MOCK_PROFILES, { age: 25 }, userPreferences)
+            : MOCK_PROFILES;
+          setProfiles(filteredMockProfiles);
+        }
         setProfileIndex(0);
       } else {
-        // No real profiles found, use mock profiles
-        setProfiles(MOCK_PROFILES);
+        // No real profiles found, use filtered mock profiles
+        const filteredMockProfiles = userPreferences.genderPreference
+          ? filterProfilesByPreferences(MOCK_PROFILES, { age: 25 }, userPreferences)
+          : MOCK_PROFILES;
+        setProfiles(filteredMockProfiles);
         setProfileIndex(0);
       }
     } catch (error) {
       console.error('Error loading profiles:', error);
-      // Fallback to mock profiles on error
-      setProfiles(MOCK_PROFILES);
+      // Fallback to filtered mock profiles on error
+      const filteredMockProfiles = userPreferences.genderPreference
+        ? filterProfilesByPreferences(MOCK_PROFILES, { age: 25 }, userPreferences)
+        : MOCK_PROFILES;
+      setProfiles(filteredMockProfiles);
       setProfileIndex(0);
     }
   };
