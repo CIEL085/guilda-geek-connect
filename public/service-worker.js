@@ -1,15 +1,14 @@
-const CACHE_VERSION = "guilda-v3";
+const CACHE_VERSION = "cache-v1";
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 const DYNAMIC_CACHE = `${CACHE_VERSION}-dynamic`;
-const IMAGE_CACHE = `${CACHE_VERSION}-images`;
 
 const urlsToCache = [
   "/",
   "/index.html",
   "/manifest.json",
-  "/icons/icon-180x180.png",
   "/icons/icon-192x192.png",
-  "/icons/icon-512x512.png"
+  "/icons/icon-512x512.png",
+  "/icons/icon-1024.png"
 ];
 
 // Install event - precache static assets
@@ -60,30 +59,14 @@ self.addEventListener("fetch", event => {
       // Try to get from cache first
       const cachedResponse = await caches.match(request);
 
-      // Cache-first strategy for images
-      if (request.destination === "image") {
-        if (cachedResponse) {
-          return cachedResponse;
-        }
-        
-        try {
-          const response = await fetch(request);
-          if (response && response.status === 200) {
-            const cache = await caches.open(IMAGE_CACHE);
-            cache.put(request, response.clone());
-          }
-          return response;
-        } catch (error) {
-          return cachedResponse || new Response("Image not available", { status: 404 });
-        }
-      }
-
-      // Cache-first for static assets
+      // Cache-first strategy for assets (images, fonts, styles, scripts)
       if (
+        request.destination === "image" ||
         request.destination === "font" ||
         request.destination === "style" ||
         request.destination === "script" ||
-        url.pathname.startsWith("/icons/")
+        url.pathname.startsWith("/icons/") ||
+        url.pathname.startsWith("/assets/")
       ) {
         if (cachedResponse) {
           return cachedResponse;
@@ -101,7 +84,7 @@ self.addEventListener("fetch", event => {
         }
       }
 
-      // Network-first strategy for everything else
+      // Network-first strategy for pages and API calls
       try {
         const response = await fetch(request);
         if (response && response.status === 200 && request.url.indexOf("http") === 0) {
