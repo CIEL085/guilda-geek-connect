@@ -96,13 +96,18 @@ export const AuthModal = ({ isOpen, onClose, onComplete, onNeedVerification }) =
 
       if (authError) throw authError;
 
-      // Update profile with vendor status
+      // Generate verification token
+      const verificationToken = `TOKEN${Math.random().toString(36).substring(2, 15)}${Date.now()}`;
+
+      // Update profile with vendor status and verification token
       const vendorStatus = selectedRole === 'vendedor' ? 'pending' : 'active';
       
       await supabase
         .from('profiles')
         .update({ 
-          vendor_status: vendorStatus
+          vendor_status: vendorStatus,
+          verification_token: verificationToken,
+          email_verified: false
         })
         .eq('user_id', authData.user.id);
 
@@ -116,11 +121,14 @@ export const AuthModal = ({ isOpen, onClose, onComplete, onNeedVerification }) =
 
       toast({
         title: "🎉 Conta criada!",
-        description: "Verifique seu email para ativar sua conta. O Supabase enviará um email de confirmação.",
-        duration: 8000
+        description: "Por favor, verifique seu email para ativar sua conta.",
+        duration: 5000
       });
 
-      // Close modal
+      // Show verification modal
+      onNeedVerification?.(email, verificationToken, selectedRole === 'vendedor');
+
+      // Close auth modal
       onClose();
       
     } catch (error) {
