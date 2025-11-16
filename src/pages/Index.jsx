@@ -13,6 +13,7 @@ import { PreferencesModal } from "@/components/PreferencesModal";
 import { ProfileModal } from "@/components/ProfileModal";
 import { ChatModal } from "@/components/ChatModal";
 import { MatchModal } from "@/components/MatchModal";
+import { EmailVerificationModal } from "@/components/EmailVerificationModal";
 import { AnimatedBackground } from "@/components/AnimatedBackground";
 import { AIChatSupport } from "@/components/AIChatSupport";
 import { BottomNav } from "@/components/BottomNav";
@@ -30,6 +31,8 @@ const Index = () => {
   const [profileModalOpen, setProfileModalOpen] = useState(false);
   const [chatModalOpen, setChatModalOpen] = useState(false);
   const [matchModalOpen, setMatchModalOpen] = useState(false);
+  const [verificationModalOpen, setVerificationModalOpen] = useState(false);
+  const [verificationData, setVerificationData] = useState({ email: '', token: '' });
   const [selectedMatch, setSelectedMatch] = useState(null);
   const [profiles, setProfiles] = useState([]);
   const [matches, setMatches] = useState([]);
@@ -204,6 +207,20 @@ const Index = () => {
     setPreferencesModalOpen(true);
   };
 
+  // Handle when user needs email verification
+  const handleNeedVerification = (email, token, isVendor) => {
+    setVerificationData({ email, token });
+    setVerificationModalOpen(true);
+  };
+
+  // Handle when email is verified
+  const handleEmailVerified = (isVendor) => {
+    setVerificationModalOpen(false);
+    if (!isVendor) {
+      setPreferencesModalOpen(true);
+    }
+  };
+
   // Handle preferences modal completion - go to main app
   const handlePreferencesComplete = async (preferences) => {
     setUserPreferences(prev => ({ ...prev, ...preferences }));
@@ -268,6 +285,14 @@ const Index = () => {
           isOpen={authModalOpen} 
           onClose={() => setAuthModalOpen(false)}
           onComplete={handleAuthModalComplete}
+          onNeedVerification={handleNeedVerification}
+        />
+        <EmailVerificationModal
+          isOpen={verificationModalOpen}
+          onClose={() => setVerificationModalOpen(false)}
+          email={verificationData.email}
+          token={verificationData.token}
+          onVerified={handleEmailVerified}
         />
         <PreferencesModal 
           isOpen={preferencesModalOpen} 
