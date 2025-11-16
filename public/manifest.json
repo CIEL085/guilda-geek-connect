@@ -1,32 +1,30 @@
 {
-  "name": "Guilda Geek",
-  "short_name": "Guilda",
+  "name": "Guilda Geek Connect",
+  "short_name": "GuildaGeek",
   "description": "App de encontros para a comunidade geek e otaku",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#080812",
-  "theme_color": "#00bfff",
-  "orientation": "portrait-primary",
+  "background_color": "#000000",
+  "theme_color": "#9d00ff",
+  "orientation": "portrait",
   "prefer_related_applications": false,
   "icons": [
     {
       "src": "/icons/icon-192x192.png",
       "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/png"
     },
     {
       "src": "/icons/icon-512x512.png",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/png"
     },
     {
-      "src": "/icons/icon-180x180.png",
-      "sizes": "180x180",
+      "src": "/icons/icon-1024.png",
+      "sizes": "1024x1024",
       "type": "image/png",
-      "purpose": "apple-touch-icon"
+      "purpose": "any maskable"
     }
   ],
   "categories": ["social", "entertainment"],
