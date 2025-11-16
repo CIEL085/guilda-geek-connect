@@ -7,7 +7,8 @@
   "display": "standalone",
   "background_color": "#080812",
   "theme_color": "#00bfff",
-  "orientation": "portrait",
+  "orientation": "portrait-primary",
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "/icons/icon-192x192.png",
@@ -25,7 +26,10 @@
       "src": "/icons/icon-180x180.png",
       "sizes": "180x180",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "apple-touch-icon"
     }
-  ]
+  ],
+  "categories": ["social", "entertainment"],
+  "lang": "pt-BR",
+  "dir": "ltr"
 }
